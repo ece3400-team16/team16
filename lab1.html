@@ -77,51 +77,73 @@
           <h2 class="mb-5">Let's Break it Down</h2>
         </div>
         <div class="row">
+            <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+              <a href="#understanding_arduinos" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="far fa-lightbulb"></i>
+              </span>
+              <h4>
+                <strong>Understanding Arduinos</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+            </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-            <span class="service-icon rounded-circle mx-auto mb-3">
-              <i class="far fa-lightbulb"></i>
-            </span>
-            <h4>
-              <strong>Understanding Arduinos</strong>
-            </h4>
-            <p class="text-faded mb-0"></p>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-            <span class="service-icon rounded-circle mx-auto mb-3">
-              <i class="fas fa-screwdriver"></i>
-            </span>
-            <h4>
-              <strong>Analyzing Potentiometers</strong>
-            </h4>
-            <p class="text-faded mb-0"></p>
+            <a href="#analyzing_potentiometers" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-screwdriver"></i>
+              </span>
+              <h4>
+                <strong>Analyzing Potentiometers</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
           </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-            <span class="service-icon rounded-circle mx-auto mb-3">
-              <i class="fas fa-toolbox"></i>
-            </span>
-            <h4>
-              <strong>Assembling Arduino Schwarzenegger</strong>
-            </h4>
-            <p class="text-faded mb-0"></p>
+            <a href="#assembling_arduino" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-toolbox"></i>
+              </span>
+              <h4>
+                <strong>Assembling Arduino Schwarzenegger</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
           </div>
           <div class="col-lg-3 col-md-6">
-            <span class="service-icon rounded-circle mx-auto mb-3">
-              <i class="fas fa-car-crash"></i>
-            </span>
-            <h4>
-              <strong>Learning to Drive</strong>
-            </h4>
-            <p class="text-faded mb-0"></p>
+            <a href="#learning_to_drive" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-car-crash"></i>
+              </span>
+              <h4>
+                <strong>Learning to Drive</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="content-section">
+    <section class="content-section" id="understanding_arduinos">
       <div class="container">
         <h1>Understanding Arduinos</h1>
         <h2>Blinking an internal LED</h2>
-        <p>We used the 'Blink' sketch that came with the Arduino IDE in order to make the LED on the Arduino Uno blink. We found the Blink sketch in File > Examples > 1. Basics > Blink. Below is a video of the Internal LED blinking.</p>
+        <p>We used the 'Blink' sketch that came with the Arduino IDE in order to make the LED on the Arduino Uno blink. We found the Blink sketch in File > Examples > 1. Basics > Blink. The code for that skecth is below:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">//the setup function runs once when you press reset or power the board</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>() {
+          pinMode(<span style="color: #0000DD; font-weight: bold">LED_BUILTIN</span>, OUTPUT);      <span style="color: #888888">// initialize internal LED pin as an output.</span>
+        }
+
+        <span style="color: #888888">// the loop function runs over and over again forever</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">LED_BUILTIN</span>, HIGH);   <span style="color: #888888">// turn LED on by making voltage HIGH</span>
+          delay(<span style="color: #0000DD; font-weight: bold">1000</span>);             <span style="color: #888888">// wait for a second</span>
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">LED_BUILTIN</span>, LOW);    <span style="color: #888888">// turn LED off by making the voltage LOW</span>
+          delay(<span style="color: #0000DD; font-weight: bold">1000</span>);             <span style="color: #888888">// wait for a second</span>
+        }
+        </pre></div>
+        <p>Below is a video of the Internal LED blinking.</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/pjT26VxNAp4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Blinking an external LED</h2>
         <p>In order for the 'Blink' code to work with an external LED, we replaced all occurrences of LED_BUILTIN in the original code with 0 which was the number of the digital pin we chose to write to.</p>
@@ -146,19 +168,19 @@
       </div>
     </section>
 
-    <section class="content-section bg-primary text-white">
+    <section id="analyzing_potentiometers" class="content-section bg-primary text-white">
       <div class="container">
         <h1>Analyzing Potentiometers</h1>
         <h2>Reading the value of a potentiometer via the serial port</h2>
         <p>We connected the potentiometer to the Arduino Uno (using the circuit diagram shown below) as shown below:</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
-            <a class="portfolio-item" href="#">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.png" alt="">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
             </a>
           </div>
           <div class="col-lg-6">
-            <a class="portfolio-item" href="#">
+            <a class="portfolio-item">
               <img class="img-fluid" src="img/lab1/pot_serial_port.jpg" alt="">
             </a>
           </div>
@@ -206,14 +228,14 @@
         <p>And below is a video demonstrating LED brightness controlled by potentiometer:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/CL8IxNHL1qE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Mapping the value of potentiometer to the servo</h2>
-        <p>Here, we want to be able to turn the potentiometer to control the direction and speed of the servo.  Recall that the servo can be given values 0-180, where 0 is its fastest clockwise speed, 180 is the fastest counter-clockwise speed, and 90 is stationary.</p>
+        <p>Here, we want to be able to turn the potentiometer to control the direction and speed of the servo.  Recall that the servo can be given values 0-180, where 0 is its fastest clockwise speed, 180 is the fastest counter-clockwise speed, and 91 is stationary.</p>
         <p>We simply had to change the mapping line from 0-255 to 0-180.  Notice in the video below that, while spinning the potentiometer from its one extreme to the other, the servo approaches its stationary point; it slows down, stops, and then starts spinning again in the opposite direction.</p>
         <p>See below for a video demonstrating servo speed/direction controlled by potentiometer:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/R8Fg_MfGP-w" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="assembling_arduino" class="content-section">
       <div class="container">
         <h1>Assembling Arduino Schwarzenegger</h1>
         <p>Our robot was assembled in the classic “tri-pod” design with 2 wheels (attached to servos) and a ball bearing.  The electronic hardware was stored on the top of the central chassis.</p>
@@ -239,11 +261,98 @@
       </div>
     </section>
 
-    <section class="content-section bg-primary text-white">
+    <section id="learning_to_drive" class="content-section bg-primary text-white">
       <div class="container">
         <h1>Learning to Drive</h1>
         <p>We looked up the library code for servos to determine how to make the robot move.  We programed functions for each wheel after determining what speed we wanted.  We then wrote a code that would move it in a square continuously whenever power was on.  Here is our code.</p>
-        <code></code>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">#include &lt;Servo.h&gt;</span>
+                               <span style="color: #888888">// outside leads to ground and +5V</span>
+        Servo leftWheel, rightWheel;
+        <span style="color: #333399; font-weight: bold">int</span> leftWheelPin <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">10</span>, rightWheelPin <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">11</span>;
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>()
+        {
+          leftWheel.attach(leftWheelPin);
+          rightWheel.attach(rightWheelPin);
+          leftWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+          rightWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">moveLeftWheelAntiClockwise</span>()
+        {
+          leftWheel.write(<span style="color: #0000DD; font-weight: bold">120</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">moveLeftWheelClockwise</span>()
+        {
+          leftWheel.write(<span style="color: #0000DD; font-weight: bold">60</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">moveRightWheelAntiClockwise</span>()
+        {
+          rightWheel.write(<span style="color: #0000DD; font-weight: bold">120</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">moveRightWheelClockwise</span>()
+        {
+          rightWheel.write(<span style="color: #0000DD; font-weight: bold">60</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">forward</span>(<span style="color: #333399; font-weight: bold">int</span> steps)
+        {
+          <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>;i<span style="color: #333333">&lt;</span>steps;i<span style="color: #333333">++</span>)
+          {
+            moveLeftWheelAntiClockwise();
+            moveRightWheelClockwise();
+          }  
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">reverse</span>(<span style="color: #333399; font-weight: bold">int</span> steps)
+        {
+          <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>;i<span style="color: #333333">&lt;</span>steps;i<span style="color: #333333">++</span>)
+          {
+            moveLeftWheelClockwise();
+            moveRightWheelAntiClockwise();
+          }  
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">stopRight</span>()
+        {
+          rightWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">stopLeft</span>()
+        {
+          leftWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">left</span>()
+        {
+          <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>;i<span style="color: #333333">&lt;</span><span style="color: #0000DD; font-weight: bold">10</span>;i<span style="color: #333333">++</span>)
+          {
+            moveLeftWheelAntiClockwise();
+          }  
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">right</span>()
+        {
+          <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>;i<span style="color: #333333">&lt;</span><span style="color: #0000DD; font-weight: bold">10</span>;i<span style="color: #333333">++</span>)
+          {
+            moveRightWheelClockwise();
+          }  
+        }
+
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>()
+        {
+          
+          forward(<span style="color: #0000DD; font-weight: bold">10</span>);
+          delay(<span style="color: #0000DD; font-weight: bold">3000</span>);
+          stopLeft();
+          delay(<span style="color: #0000DD; font-weight: bold">900</span>);
+          
+        }
+        </pre></div>
+
         <p>And here is it moving:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/CHw4wVF8Cv8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
