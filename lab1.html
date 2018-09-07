@@ -122,23 +122,23 @@
         <h1>Understanding Arduinos</h1>
         <h2>Blinking an internal LED</h2>
         <p>We used the 'Blink' sketch that came with the Arduino IDE in order to make the LED on the Arduino Uno blink. We found the Blink sketch in File > Examples > 1. Basics > Blink. Below is a video of the Internal LED blinking.</p>
-
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/pjT26VxNAp4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Blinking an external LED</h2>
         <p>In order for the 'Blink' code to work with an external LED, we replaced all occurrences of LED_BUILTIN in the original code with 0 which was the number of the digital pin we chose to write to.</p>
-        <code>
-          //the setup function runs once when you press reset or power the board
-          void setup() {
-            pinMode(0, OUTPUT);      // initialize digital pin 0 as an output.
-          }
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">//the setup function runs once when you press reset or power the board</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>() {
+          pinMode(<span style="color: #0000DD; font-weight: bold">0</span>, OUTPUT);      <span style="color: #888888">// initialize digital pin 0 as an output.</span>
+        }
 
-          // the loop function runs over and over again forever
-          void loop() {
-            digitalWrite(0, HIGH);   // turn LED on by making voltage HIGH
-            delay(1000);             // wait for a second
-            digitalWrite(0, LOW);    // turn LED off by making the voltage LOW
-            delay(1000);             // wait for a second
-          }
-        </code>
+        <span style="color: #888888">// the loop function runs over and over again forever</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">0</span>, HIGH);   <span style="color: #888888">// turn LED on by making voltage HIGH</span>
+          delay(<span style="color: #0000DD; font-weight: bold">1000</span>);             <span style="color: #888888">// wait for a second</span>
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">0</span>, LOW);    <span style="color: #888888">// turn LED off by making the voltage LOW</span>
+          delay(<span style="color: #0000DD; font-weight: bold">1000</span>);             <span style="color: #888888">// wait for a second</span>
+        }
+        </pre></div>
+
         <p>Below is a video of the external LED blinking:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/HGZolIZSZxk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <p>We repeated this procedure for all the other digital pins on the board to ensure that they worked.</p>
@@ -192,7 +192,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section class="content-section bg-primary text-white">
       <div class="container">
         <h1>Analyzing Potentiometers</h1>
         <h2>Reading the value of a potentiometer via the serial port</h2>
@@ -200,68 +200,55 @@
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item" href="#">
-              <span class="caption">
-                <span class="caption-content">
-                  <h2>Lab 1</h2>
-                  <p class="mb-0">Microcontrollers</p>
-                </span>
-              </span>
-              <img class="img-fluid" src="img/portfolio-1.jpg" alt="">
+              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.png" alt="">
             </a>
           </div>
           <div class="col-lg-6">
             <a class="portfolio-item" href="#">
-              <span class="caption">
-                <span class="caption-content">
-                  <h2>Lab 2</h2>
-                  <p class="mb-0">Analog Circuitry and FFT's</p>
-                </span>
-              </span>
-              <img class="img-fluid" src="img/portfolio-2.jpg" alt="">
+              <img class="img-fluid" src="img/lab1/pot_serial_port.jpg" alt="">
             </a>
           </div>
         </div>
         <p>We then wrote code to initialise the serial connection (to enable us to print the analogue output to the serial port). We noticed that the value of the analogue output was between 0 and 1023 but we wanted the range to be 0 - 5 so we multiplied the value of the analogue output by 5/1023 which was 0.0049. We programmed it to print a value to the serial port every half second.</p>
-        <code>
-          int analogPin = 1;     // potentiometer wiper (middle terminal) connected to analog pin 1
-                                 // outside leads to ground and +5V
-          int val = 0;           // variable to store the value read
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">int</span> analogPin <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>;     <span style="color: #888888">// potentiometer wiper (middle terminal) connected to analog pin 1</span>
+                               <span style="color: #888888">// outside leads to ground and +5V</span>
+        <span style="color: #333399; font-weight: bold">int</span> val <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;           <span style="color: #888888">// variable to store the value read</span>
 
-          void setup()
-          {
-            Serial.begin(9600);              //  setup serial
-          }
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>()
+        {
+          Serial.begin(<span style="color: #0000DD; font-weight: bold">9600</span>);              <span style="color: #888888">//  setup serial</span>
+        }
 
-          void loop()
-          {
-            val = analogRead(analogPin);     // read the input pin
-            Serial.println(val*.0049);       // debug value 
-            delay(500);                      // delay half-second
-          }
-        </code>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>()
+        {
+          val <span style="color: #333333">=</span> analogRead(analogPin);     <span style="color: #888888">// read the input pin</span>
+          Serial.println(val<span style="color: #333333">*</span><span style="color: #6600EE; font-weight: bold">.0049</span>);       <span style="color: #888888">// debug value </span>
+          delay(<span style="color: #0000DD; font-weight: bold">500</span>);                      <span style="color: #888888">// delay half-second</span>
+        }
+        </pre></div>
         <p>Below is a video of the analogue output being read by the serial monitor:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/o0OMjP_WKFw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Mapping the value of potentiometer to the LED</h2>
-        <p>This is a simple extension of the above code for reading a potentiometer value.  Notice that only one line was added at the end of the program:<code>analogWrite(ledPin, map(val, 0, 1023, 0, 255));</code>.  The Arduino analogWrite reference page states that the write value must be between 0 and 255.  Thus, we wrote this line that maps the potentiometer value to the necessary parameters (0 to 255), and writes this value to the LED pin.  See the full code below:</p>
-        <code>
-          int ledPin = 11;
-          int analogPin = 5;     // potentiometer wiper (middle terminal) connected to analog pin 5
-                                 // outside leads to ground and +5V
-          int val = 0;           // variable to store the value read
+        <p>This is a simple extension of the above code for reading a potentiometer value.  Notice that only one line was added at the end of the program: <code>analogWrite(ledPin, map(val, 0, 1023, 0, 255));</code>.  The Arduino analogWrite reference page states that the write value must be between 0 and 255.  Thus, we wrote this line that maps the potentiometer value to the necessary parameters (0 to 255), and writes this value to the LED pin.  See the full code below:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">int</span> ledPin <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">11</span>;
+        <span style="color: #333399; font-weight: bold">int</span> analogPin <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>;     <span style="color: #888888">// potentiometer wiper (middle terminal) connected to analog pin 5</span>
+                               <span style="color: #888888">// outside leads to ground and +5V</span>
+        <span style="color: #333399; font-weight: bold">int</span> val <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;           <span style="color: #888888">// variable to store the value read</span>
 
-          void setup()
-          {
-            Serial.begin(9600);              //  setup serial
-          }
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>()
+        {
+          Serial.begin(<span style="color: #0000DD; font-weight: bold">9600</span>);              <span style="color: #888888">//  setup serial</span>
+        }
 
-          void loop()
-          {
-            val = analogRead(analogPin);     // read the input pin
-            Serial.println(val*.0049);       // debug value
-            delay(500);                      // delay half-second
-            analogWrite(ledPin, map(val, 0, 1023, 0, 255));
-          }
-        </code>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>()
+        {
+          val <span style="color: #333333">=</span> analogRead(analogPin);     <span style="color: #888888">// read the input pin</span>
+          Serial.println(val<span style="color: #333333">*</span><span style="color: #6600EE; font-weight: bold">.0049</span>);       <span style="color: #888888">// debug value</span>
+          delay(<span style="color: #0000DD; font-weight: bold">500</span>);                      <span style="color: #888888">// delay half-second</span>
+          analogWrite(ledPin, map(val, <span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1023</span>, <span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">255</span>));
+        }
+        </pre></div>
+
         <p>And below is a video demonstrating LED brightness controlled by potentiometer:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/CL8IxNHL1qE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Mapping the value of potentiometer to the servo</h2>
@@ -337,22 +324,13 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section class="content-section bg-primary text-white">
       <div class="container">
         <h1>Learning to Drive</h1>
         <p>We looked up the library code for servos to determine how to make the robot move.  We programed functions for each wheel after determining what speed we wanted.  We then wrote a code that would move it in a square continuously whenever power was on.  Here is our code.</p>
         <code></code>
         <p>And here is it moving:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/CHw4wVF8Cv8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="content-section bg-primary text-white">
-      <div class="container text-center">
-        <h2 class="mb-4">What do these buttons do?</h2>
-        <a href="#" class="btn btn-xl btn-light mr-4">Click Me!</a>
-        <a href="#" class="btn btn-xl btn-dark">Look at Me!</a>
       </div>
     </section>
 
