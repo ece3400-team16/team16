@@ -139,7 +139,7 @@
           </div>
         </div>
         <p>We initially had only three line sensors - one at the front and two at the sides. We decided against this design because when our robot strayed from the line, we were unable to tell which direction it had strayed in. This made us unable to correct it. The addition of the second line sensor at the front fixed this problem because it allowed the robot to detect if it was straying in the direction of the sensor that was no longer seeing white.</p>
-        <p>Aside from the sensors, we also changed the chassis that the hardware was sitting on.  We placed the power source underneath the chassis, while the breadboard and the arduino sat on top.</p>
+        <p>Aside from the sensors, we also changed the chassis that the hardware was sitting on.  We placed the power source underneath the chassis, while the breadboard and the arduino sat on top. This allows for more room for wiring and potential growth of the robot as we move farther into its development.</p>
         <p>Below are photos of our total robot:</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
@@ -167,11 +167,123 @@
     <section id="code" class="content-section bg-primary text-white">
       <div class="container">
         <h1>Coding its Movements</h1>
+        <h2>Turning the Wheels</h2>
+        <p>For sake of brevity, the pre-setup() and setup() code will be left out.</p>
+        <p>We have set up two wheels attached to the servos——<code>leftWheel</code> and <code>rightWheel</code>——which can both be written to with values from 0-180.  We also have labeled our four sensors as <code>frontLeft</code>, <code>frontRight</code>, <code>backLeft</code>, and <code>backRight</code>.  The “front” sensors (the two sensors placed on the white line currently being traversed) are designated strictly for line-following, while the “rear” sensors (the two sensors at 90 degrees to the "front" sensors) are for detecting an intersection.</p>
+
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">// Direct wheel control.  -----------------------------------------------------</span>
+        <span style="color: #888888">// 0 to 89 = Clockwise, and 91-180 = CounterClockwise.</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">writeLeft</span>(<span style="color: #333399; font-weight: bold">int</span> speed)
+        {
+          leftWheel.write(speed);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">writeRight</span>(<span style="color: #333399; font-weight: bold">int</span> speed)
+        {
+          rightWheel.write(speed);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">stopRight</span>()
+        {
+          rightWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">stopLeft</span>()
+        {
+          leftWheel.write(<span style="color: #0000DD; font-weight: bold">90</span>);
+        }
+        </pre></div>
+
+        <p>The above code snippet demonstrates how we write the raw 0-180 values to the left or right wheels (servos).  We’ve included “stop” functions to make stopping each wheel easier than writing 90 every time we want to stop it.  For moving otherwise, we may want to vary the speed, so we leave a speed parameter in the top two write functions; these two functions are used in the following functions to make our robot execute various maneuvers.</p>
+
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">// Forward, reverse, and turns. --------------------------------------------------</span>
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">forward</span>()
+        {
+          writeLeft(speedLeftForward);
+          writeRight(speedRightForward);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">reverse</span>()
+        {
+          writeLeft(speedLeftBackward);
+          writeRight(speedRightBackward);
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">turnRight</span>(<span style="color: #333399; font-weight: bold">int</span> ms)
+        {
+          writeLeft(speedLeftForward);
+          stopRight();
+          delay(ms);     <span style="color: #888888">// ms is in milliseconds!</span>
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">turnLeft</span>(<span style="color: #333399; font-weight: bold">int</span> ms)
+        {
+          writeRight(speedRightForward);
+          stopLeft();
+          delay(ms);     <span style="color: #888888">// ms is in milliseconds!</span>
+          
+        }
+        </pre></div>
+
+        <p>First, note the <code>forward()</code> function, which has changed slightly since lab 1!  We abolished the <code>move< left_or_right >Wheel< Anticlockwise_or_clockwise >()</code> coding scheme. Instead, we simply write to each wheel a particular “speed-forward” integer, an integer from 0-180, which is defined in the pre-setup code but is not shown here. <code>speedLeftForward</code> is defined as a value above 90 because these values make the servo spin counterclockwise, and the left wheel needs to spin counterclockwise in order to go forward.  Conversely (and simultaneously), the right wheel must spin clockwise in order for the robot to move forward, and so <code>speedRightForward</code> must be below 90!  Let’s say <code>speedLeftForward</code> is defined as 120 (90+30); we must define <code>speedRightForward</code> as 60 (90-30) so that the servos spin at the same speed but in the correct direction depending on what side of the robot it is on.  So, this new coding scheme allows more flexibility with wheel speed but requires that we remember what integer (0-180) that we must write to each wheel.</p>
+        <p>Now, examine the <code>turnRight(int ms)</code> function.  To perform a right turn, the left wheel must be spinning faster than the right wheel, so we write to the left wheel a given speed and stop the right wheel from spinning.  The parameter int ms  allows us to calibrate how long we want our turn to take, by varying the time of the delay in milliseconds!  This allowed us to calibrate our turns to be as close to 90-degree turns as possible, by varying the turn-time in milliseconds.  We will replace this method of turn calibration, however, with a more robust solution that will be described later.</p>       
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">// Line-following procedures. ------------------------------------------------------</span>
+        <span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">isWhite</span>(<span style="color: #333399; font-weight: bold">int</span> pin)
+        {
+          <span style="color: #333399; font-weight: bold">int</span> val <span style="color: #333333">=</span> analogRead(pin);
+          <span style="color: #008800; font-weight: bold">return</span> val <span style="color: #333333">&gt;</span> threshold <span style="color: #333333">?</span> <span style="color: #007020">false</span> <span style="color: #333333">:</span> <span style="color: #007020">true</span>;
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">followLine</span>()
+        {
+          <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #333333">!</span>(isWhite(backLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(backRight)))
+          {
+          <span style="color: #008800; font-weight: bold">if</span>(isWhite(frontLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(frontRight))   <span style="color: #888888">// if both sensors detect white, move forward regularly.</span>
+          {
+            forward();
+          }
+          <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>(<span style="color: #333333">!</span>isWhite(frontLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(frontRight))   <span style="color: #888888">// if Left sensor detects black (if it veers left)</span>
+          {
+            writeLeft(speedLeftForward);                     <span style="color: #888888">// keep Left wheel moving.</span>
+            stopRight();                        <span style="color: #888888">// stop the Right wheel.</span>
+          }
+          <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span>(isWhite(frontLeft) <span style="color: #333333">&amp;&amp;</span> <span style="color: #333333">!</span>isWhite(frontRight))   <span style="color: #888888">// if Right sensor detects black (if it veers right)</span>
+          {
+            writeRight(speedRightForward);                     <span style="color: #888888">// keep Right wheel moving.</span>
+            stopLeft();                         <span style="color: #888888">// stop the Left wheel.</span>
+          }
+          <span style="color: #008800; font-weight: bold">else</span>
+          {
+            stopLeft();
+            stopRight();
+          }
+          }
+        }
+        </pre></div>
         <h2>Moving in a Line</h2>
-        <p>Generate code with hilite.me</p>
+        <p>Now, for the meat and potatoes; the line-following function!</p>
+        <p>First, we created a helper-function <code>bool isWhite(int pin)</code>. We pass in an integer that represents the pin number of one of the four sensors (frontLeft, backRight, etc.), and if it’s read value is greater than the threshold value, then isWhite outputs false, otherwise it outputs true.</p>
+        <p>Within the function <code>linefollow()</code> is a while loop, whose condition basically reads as “while the ‘rear’ sensors read ‘notWhite’”, or in more perfect English, “while the robot is NOT at an intersection”.  Once the robot reaches an intersection, we want the robot to execute a turn instead of the line-following function.  To keep the robot straight, we use several conditionals that read like this:</p>
+        <ul>
+          <li>If both sensors read ‘white’, then continue forward like normal.</li>
+          <li>If the LEFT sensor reads “black” (i.e. if it veers left), then spin the left wheel at normal speed and stop the right wheel (i.e. turn right).</li>
+          <li>If the RIGHT sensor reeads “black”, then spin the right wheel and stop the left wheel (veer left).</li>
+          <li>Finally, if neither front sensor reads white, then the robot stops.</li>
+        </ul>
+        <p>Below is a video showing our robot moving along a white line using these conditions to reorient itself:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/nURA6HtJ2vo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <h2>Making a Figure Eight</h2>
-        <p>Generate code with hilite.me</p>
+        <p>The final code snippet is a simple implementation of driving in a figure-eight pattern, which relied on the line following functions defined above. If the robot is placed in the middle segment of the figure eight, it takes four consecutive right turns followed by four consecutive left turns (or vice versa) to complete the figure eight and finish where it started.</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">Execute a figure eight whenever an intersection is detected.
+           Start the robot in the MIDDLE SEGMENT of the figure eight.
+           <span style="color: #008800; font-weight: bold">for</span>(<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">8</span>; i<span style="color: #333333">++</span>)
+           {
+             followLine();
+             <span style="color: #008800; font-weight: bold">if</span>(i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">4</span>) turnRight(<span style="color: #0000DD; font-weight: bold">1000</span>);
+             <span style="color: #008800; font-weight: bold">else</span> <span style="color: #0066BB; font-weight: bold">turnLeft</span>(<span style="color: #0000DD; font-weight: bold">1000</span>);
+           }
+        </pre></div>
+        <p>This code successfully allowed our robot to traverse the grid in a figure-eight pattern, as shown in the video below:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/JdTmQjY5yoI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </section>
@@ -179,22 +291,27 @@
     <section class="content-section" id="road_bumps">
       <div class="container">
         <h1>Road Bumps</h1>
-        <h2>What Went Wrong</h2>
-        <p>Generate code with hilite.me</p>
+        <p>We have used two line sensors in the front and two sensors at the sides, to make the robot follow a line and turn, respectively. The front sensors work on the principle that if either one detects black, while following the white line, then it moves on the opposite direction of the detecting-sensor to maintain alignment. In other words, if our robot starts getting away from the white line, let's just say towards left of the white line, then our front-left sensor will start detecting black. This will make the robot go right, as it's coded to align itself that way. Hence, it will continue to stay on the white line.</p>
+        <p>Though this hardware and software design is effective in ensuring that the robot stays on its line, it led to issues with the motion of the robot itself. If the distance between the front sensors is nearly same as the width of the white line, then the robot will keep going left and right, in a forward manner. What it means is that the robot will move forward by following the white line but in a jittery fashion. This jittery nature becomes noisy and irregular if the speed of robot is increased.
         <p>Below is a video showing our robot moving along a line, but with jittery movements:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/QDGcDVhsCWQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <p>This was also noted when the robot moved in a figure eight:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/QeqqTkMpDxQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <h2>How We Fixed It</h2>
-        <p>Generate code with hilite.me</p>
+        <p>There are two simple solutions to this problem: reducing the speed of the robot or trying to reduce the distance between the front sensors as much as possible. Although the former solution works, it is not an optimal solution——it is more of a prevention method than a solution. The latter was found to be a viable solution and ultimately effective solution. We reduced the distance between sensors and it was found that the jittery nature was reduced to an acceptable level.</p>
       </div>
     </section>
 
     <section id="future" class="content-section bg-primary text-white">
       <div class="container">
         <h1>Future Features</h1>
-        <h2>For Next Time</h2>
-        <p></p>
+        <h2>More Effective Turning</h2>
+        <p>For turning the robot left and right, we fixed the speed of the robot to a particular value (assume it to be X) and then we hardcoded a count (assume it to be Y) to turn the wheels, so that we can make a clean turn. For example, let's say if we want to turn left, then we make the left wheel stop and make the right wheel rotate for Y counts.</p>
+        <p>Although the hardcoded value currently works, it may not if we change the speed to another value, Z. The value for rotation (Y) would increase or decrease, depending on whether Z < X or Z > X, respectively. The issue is that whenever we change the speed of the robot then we had to re-calibrate the turn-count.</p>
+        <p>This issue would be resolved if we designed the robo into a self-calibrating module, wherein it calibrate its turn as per the speed it runs on. How would we do that? The turns are done with a count to let the Arduino know for how many milliseconds it has to turn. Once the robot reaches an intersection, all four sensors will be on white. The robot can turn, either left or right, for an undetermined length of time——instead, it will wait to stop turning once the front sensors have reached white again. At that point, the turn will be complete, as the robot will have started on a white line, begun turning left or right, and then will have completed its turn on the next white line (90 degrees from the starting line). This ensures that differences in robot speed, or even inconsistencies in the grid squares, won't affect the ability for the robot to turn effectively.</p>
+        <h2>Variable Line Sensing</h2>
+        <p>Line sensor values are judged on the basis of a range from 0 to 1023 to differentiate between the reflectivity of IR light from various colors, specifically black and white for our project and lab work.</p>
+        <p>Line sensor values vary with respect to distance between the sensor and the ground (ground being the maze containing black and white regions), and also with respect to the light under which the robot is working (i.e. natural sunlight vs artificial light). The latter means that the read value changes in magnitude when the room is darker or brighter. There becomes a possibility wherein a robot might not be able to judge the color using the hardcoded range due to a drastic change in the environment's lighting.</p>
+        <p>To prevent this from becoming an issue, we can make the robot calibrate itself at the beginning of the course and get its readings of the ranges attributed to black and white. Since we have the initial placement of the robot within our control, we can ensure the robot sits on a white line (with the front two sensors as within the boundaries of the white line as possible) to start with. We can adjust the <code>setup()</code> function to read the value from the line sensor as it's above a white. Based on this value we can store a range (with some offset to incorporate any outliers) and use that range to differentiate between black and white.</p>
       </div>
     </section>
 
