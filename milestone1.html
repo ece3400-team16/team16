@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Milestone 1</title>
+    <link rel="shortcut icon" href="favicon-paper-plane.ico" />
+    
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <a class="menu-toggle rounded" href="#">
+      <i class="fas fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#page-top">Home</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#about">About</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#milestones">Milestones</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#labs">Labs</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="masthead d-flex">
+      <div class="container text-center my-auto">
+        <h1 class="mb-1">Milestone 1</h1>
+        <h3 class="mb-5">
+          <em>Our spidey sensors are tingling!</em>
+        </h3>
+        <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
+      </div>
+      <div class="overlay"></div>
+    </header>
+
+    <section id="about" class="content-section">
+      <div class="container">
+        <h1>Objective</h1>
+        <ul>
+          <li>Successfully program robot to follow a line</li>
+          <li>Successfully program robot to traverse a grid in a figure eight</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Milestones -->
+    <section class="content-section bg-primary text-white text-center" id="milestones">
+      <div class="container">
+        <div class="content-section-heading">
+          <h2 class="mb-5">Let's Break it Down</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+              <a href="#hardware" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-wrench"></i>
+              </span>
+              <h4>
+                <strong>Hardware Modifications</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+            </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+            <a href="#code" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-code"></i>
+              </span>
+              <h4>
+                <strong>Coding its Movements</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <a href="#road_bumps" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-exclamation"></i>
+              </span>
+              <h4>
+                <strong>Road Bumps</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+            <a href="#future" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+              <h4>
+                <strong>Future Features</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="hardware">
+      <div class="container">
+        <h1>Hardware Modifications</h1>
+        <h2>Changes Since Lab 1</h2>
+        <p>We began by adding four line sensors to our robot. Two line sensors are placed at the front of the robot to help with line following and the other two sensors are placed at the sides of the robot to detect intersections.</p>
+        <p>Below is the placement of the line sensors on our robot:</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/milestone1/Line Sensors.jpg" alt="">
+            </a>
+          </div>
+        </div>
+        <p>We initially had only three line sensors - one at the front and two at the sides. We decided against this design because when our robot strayed from the line, we were unable to tell which direction it had strayed in. This made us unable to correct it. The addition of the second line sensor at the front fixed this problem because it allowed the robot to detect if it was straying in the direction of the sensor that was no longer seeing white.</p>
+        <p>Aside from the sensors, we also changed the chassis that the hardware was sitting on.  We placed the power source underneath the chassis, while the breadboard and the arduino sat on top.</p>
+        <p>Below are photos of our total robot:</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item" href="lab1.html">
+              <span class="caption">
+                <span class="caption-content">
+                </span>
+              </span>
+              <img class="img-fluid" src="img/milestone1/Final Arduino Design.jpg" alt="">
+            </a>
+          </div>
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <span class="caption">
+                <span class="caption-content">
+                </span>
+              </span>
+               <img class="img-fluid" src="img/milestone1/Final Robot Design.jpg" alt="">
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="code" class="content-section bg-primary text-white">
+      <div class="container">
+        <h1>Coding its Movements</h1>
+        <h2>Moving in a Line</h2>
+        <p>Generate code with hilite.me</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/nURA6HtJ2vo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <h2>Making a Figure Eight</h2>
+        <p>Generate code with hilite.me</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/JdTmQjY5yoI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <section class="content-section" id="road_bumps">
+      <div class="container">
+        <h1>Road Bumps</h1>
+        <h2>What Went Wrong</h2>
+        <p>Generate code with hilite.me</p>
+        <p>Below is a video showing our robot moving along a line, but with jittery movements:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/QDGcDVhsCWQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>This was also noted when the robot moved in a figure eight:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/QeqqTkMpDxQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <h2>How We Fixed It</h2>
+        <p>Generate code with hilite.me</p>
+      </div>
+    </section>
+
+    <section id="future" class="content-section bg-primary text-white">
+      <div class="container">
+        <h1>Future Features</h1>
+        <h2>For Next Time</h2>
+        <p></p>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <!-- POINT TO PHILLIPS -->
+    <section id="contact" class="map">
+      <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=phillips%20hall%2C%20ithaca&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+      <br/>
+      <small>
+        <a href="https://www.google.com/maps/place/Phillips+Hall/@42.4445807,-76.4842416,17z/data=!4m7!3m6!1s0x89d0818c816cffe3:0xfd9ee07ff22c5aa4!8m2!3d42.4445768!4d-76.4820529!9m1!1b1"></a>
+      </small>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+      <div class="container">
+        <ul class="list-inline mb-5">
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white" href="https://github.com/ece3400-team16">
+              <i class="icon-social-github"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="text-muted small mb-0">Copyright &copy; ECE 3400 2018</p>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.min.js"></script>
+
+  </body>
+
+</html>
