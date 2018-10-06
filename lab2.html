@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Lab 2</title>
+    <link rel="shortcut icon" href="favicon-paper-plane.ico" />
+    
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <a class="menu-toggle rounded" href="#">
+      <i class="fas fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#page-top">Home</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#about">About</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#milestones">Milestones</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#labs">Labs</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="masthead d-flex">
+      <div class="container text-center my-auto">
+        <h1 class="mb-1">Lab 2: Analog Circuitry and FFTs</h1>
+        <h3 class="mb-5">
+          <em>Sensory overload!</em>
+        </h3>
+        <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
+      </div>
+      <div class="overlay"></div>
+    </header>
+
+    <section id="about" class="content-section">
+      <div class="container">
+        <h1>Objective</h1>
+        <p>This lab began the process of adding various sensors and filters to analyze the world around our robot, specifically in terms of auditory and spatial awareness. In this lab, acoustic and IR signals were taken and read into a combination of sensors, filters, and amplifiers in order to detect them. Eventually, the detections of these external stimuli will lead to actions taken by the robot.</p>
+        <h1>Procedure</h1>
+        <p>There were two sections of the lab to be tackled: acoustic and optical. Orby, Labhansh, and Orrin worked on the acoustic subteam. Caitlin and Luke worked on the optical subteam. Once both individual sections of code and hardware were working, Luke and Labhansh merged the code snippets into a singular, functional file.</p>
+      </div>
+    </section>
+
+    <!-- Milestones -->
+    <section class="content-section bg-primary text-white text-center" id="milestones">
+      <div class="container">
+        <div class="content-section-heading">
+          <h2 class="mb-5">Let's Break it Down</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+              <a href="#optical" class="text-white text-center js-scroll-trigger">
+                <span class="service-icon rounded-circle mx-auto mb-3">
+                  <i class="far fa-eye"></i>
+                </span>
+                <h4>
+                  <strong>Optical Subteam</strong>
+                </h4>
+                <p class="text-faded mb-0"></p>
+              </a>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+              <a href="#acoustics" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-volume-up"></i>
+              </span>
+              <h4>
+                <strong>Acoustics Subteam</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+            </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+            <a href="#assembling_arduino" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-arrows-alt-h"></i>
+              </span>
+              <h4>
+                <strong>Merged Code</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="optical">
+      <div class="container">
+        <h1>Optical Subteam</h1>
+        <h2>Caitlin and Luke</h2>
+        <p>First, we created the phototransistor circuit on a breadboard and hooked the output up to our Arduino to test our use of the FFT library. Our ad-hoc procedure of testing the IR detection consisted of the following:</p>
+        <ul>
+          <li>While holding the powered-on IR hat ~6 inches from the phototransistor, run the fft_adc_serial program to collect frequency data</li>
+          <li>Display the data outputted by the program in the serial monitor</li>
+          <li>Copy these values and paste into excel to graph</li>
+        </ul>
+        <p>Observe the graph below of a successful detection of the target frequency of 6.08 kHz.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/optical_fft.png" alt="">
+            </a>
+          </div>
+        </div>
+        <p>Notice how the value in bin ~43-44 spikes.  This is our circuit detecting the target frequency!  There are a total of 256 bins, the first 128 of which we examine, and each bin has a width of about 150 Hz, which we determined from the following data and calculations:</p>
+        <ul>
+          <li>Arduino Clock Speed = 16 MHz</li>
+          <li>Clock cycles to complete one ADC conversion = 13</li>
+          <li>Pre-scalar value (set in the fft_adc_serial program) = 32</li>
+          <li>16 MHz / 13 cycles / 32 = ~38 kHz == Sample Frequency!</li>
+          <li>38 kHz / 256 bins = 150.24 Hz == Bin Width!</li>
+        </ul>
+        <p>We noticed that our circuit detects the 6.08 kHz signal, but the peak appears in bins 43 or 44, which mathematically translates to about 6.4 kHz.  With the bin width we calculated, one would expect 6.08 kHz to appear in bin 40 or 41.  This error in bin location may be due to the actual clock speed being slower than 16 MHz, which is the ideal clock speed.</p>
+        <p>Now that we successfully detected the target frequency from a short distance, we needed to employ an amplifying circuit to allow us to detect from longer distances (~2 feet).  Below is a diagram of our final optical circuit incorporating the LM358P non-inverting op-amp. It’s composed of a non-inverting amplifier and an accompanying circuit to reduce and control the input of DC voltage into the amplifier chip.</p>
+        <p>The non-inverting amplifier was designed to give a gain of 11 based on the following gain equation and resistor values: Av = 1 + RF/R1. Our RF resistor value was 10kΩ and our R1 resistor value was 1kΩ. The op-amp could only handle a maximum of 4V DC voltage, otherwise it would rail out, so the amount of DC voltage being inputted into the op-amp had to be regulated. We added a large capacitor, of capacitance 10μF, to block the DC voltage. If a DC voltage is applied across the capacitor, it will charge up, whereas if an alternating current (AC) is applied, the capacitor attempts to keep its voltage level constant, therefore letting current into the circuit. </p>
+        <p>To accompany the capacitor, we added a voltage divider so as to control the amount of DC voltage flowing into the amplifier chip and limit it to approximately 200mV, which, after the amplifier’s gain of 11, would maintain a DC voltage of approximately 2V, ensuring that the op-amp wouldn’t rail out. The resistor values for this voltage divider were calculated using Vout = Vin(R3/(R3+R2)) where Vout = 200mV and Vin = Vdd = 5V. R2 was found to be 24 times that of R3, so we used resistor values R2 = 240kΩ and R3 = 10kΩ.</p>
+        <p>A full diagram of the Optical circuit is below.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/optical_circuit.png" alt="">
+            </a>
+          </div>
+        </div>
+        <p>The whole point of this additional circuit was to amplify the output so as to make the signal detectable from a farther distance. The original gain of the amplifier circuit when it was simply a non-inverting amplifier is shown on the left. The final gain of the enture circuit, with the capacitor and voltage divider, is shown on the right.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/optical_initial_gain.jpg" alt="">
+            </a>
+          </div>
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/optical_final_gain.jpg" alt="">
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="acoustics" class="content-section bg-primary text-white">
+      <div class="container">
+        <h1>Acoustic Subteam</h1>
+        <h2>Orrin, Orby, and Labhansh</h2>
+        <p>We recognised that to make the acoustic part of this lab work, we would need to build an active band-pass filter. This would enable us to amplify all sounds at 660Hz. We built the following circuit to act as our active band-pass filter.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_circuit.png" alt="">
+            </a>
+          </div>
+        </div>
+        <p>After building the circuit, we copied the FFT library into the 'libraries' folder of our Arduino IDE. We then modified the fft_adc_serial script to use analogRead() then attempted to run the fft_adc_serial script with the microphone. We ran into problems so we decided to test the circuit using the function generator.</p>
+        <p>We used the function generator to generate a frequency of 660 Hz with an amplitude of 30mV. The fft_adc_serial script runs at a frequency of 9600 Hz to collect 256 samples on each run. This means that each bin should have a width of 9600/256 = 37.5Hz. Since we were generating a 660 Hz tone, we expected the tone to be recognised around the 18th (660/37.5 = 17.6) bin.</p>
+        <p>From the graph below, it is clear that the tone was recognised between the 19th and 21st bin. We used these as our bin range when writing code.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_fft.png" alt="">
+            </a>
+          </div>
+        </div>
+        <p>We were able to obtain a gain of 11.7 using the function generator (as seen below). We were also able to successfully suppress sounds at all frequencies except harmonics of 660Hz. This is also shown below. </p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_fft_oscilloscope.jpg" alt="">
+            </a>
+          </div>
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_gain.jpg" alt="">
+            </a>
+          </div>
+        </div>
+        <p>After ensuring this worked, we connected the microphone back into the circuit and got similar results (shown below). Our output sine waves weren't perfect but it was at the right frequency and we were able to see its general shape. Here, we had a gain of 21.1. </p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_fft_final.jpg" alt="">
+            </a>
+          </div>
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/acoustics_gain_final.PNG" alt="">
+            </a>
+          </div>
+        </div>
+        <p>We added a line of code to display "We got 660Hz" when 660Hz was successfully detected.</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dceif6FNzkM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <section id="merged" class="content-section">
+      <div class="container">
+        <h1>Merged Code</h1>
+        <h2>Putting the pieces together!</h2>
+        <p>Here’s a picture of Arduino Schwarzenegger with the Optical and Acoustic circuits attached.  The Optical circuit is on the on-board breadboard, and the Acoustic is on the detached breadboard (for the time being).</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab2/final_robot_pic.JPG" alt="">
+            </a>
+          </div>
+        </div>
+        <p>Here is a snippet of our Optical code:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">#define LOG_OUT 1 </span><span style="color: #888888">// use the log output function</span>
+        <span style="color: #557799">#define FFT_N 256 </span><span style="color: #888888">// set to 256 point fft</span>
+
+        <span style="color: #557799">#include &lt;FFT.h&gt; </span><span style="color: #888888">// include the library</span>
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>() {
+          Serial.begin(<span style="color: #0000DD; font-weight: bold">9600</span>); <span style="color: #888888">// use the serial port</span>
+          TIMSK0 <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// turn off timer0 for lower jitter</span>
+          ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xe5</span>; <span style="color: #888888">// set the adc to free running mode</span>
+          ADMUX <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x40</span>; <span style="color: #888888">// use adc0</span>
+          DIDR0 <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x01</span>; <span style="color: #888888">// turn off the digital input for adc0</span>
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+          <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #0000DD; font-weight: bold">1</span>) { <span style="color: #888888">// reduces jitter</span>
+            cli();  <span style="color: #888888">// UDRE interrupt slows this way down on arduino1.0</span>
+            <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) { <span style="color: #888888">// save 256 samples</span>
+              <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #333333">!</span>(ADCSRA <span style="color: #333333">&amp;</span> <span style="color: #005588; font-weight: bold">0x10</span>)); <span style="color: #888888">// wait for adc to be ready</span>
+              ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xf5</span>; <span style="color: #888888">// restart adc</span>
+              byte m <span style="color: #333333">=</span> ADCL; <span style="color: #888888">// fetch adc data</span>
+              byte j <span style="color: #333333">=</span> ADCH;
+              <span style="color: #333399; font-weight: bold">int</span> k <span style="color: #333333">=</span> (j <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">8</span>) <span style="color: #333333">|</span> m; <span style="color: #888888">// form into an int</span>
+              k <span style="color: #333333">-=</span> <span style="color: #005588; font-weight: bold">0x0200</span>; <span style="color: #888888">// form into a signed int</span>
+              k <span style="color: #333333">&lt;&lt;=</span> <span style="color: #0000DD; font-weight: bold">6</span>; <span style="color: #888888">// form into a 16b signed int</span>
+              fft_input[i] <span style="color: #333333">=</span> k; <span style="color: #888888">// put real data into even bins</span>
+              fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// set odd bins to 0</span>
+            }
+            fft_window(); <span style="color: #888888">// window the data for better frequency response</span>
+            fft_reorder(); <span style="color: #888888">// reorder the data before doing the fft</span>
+            fft_run(); <span style="color: #888888">// process the data in the fft</span>
+            fft_mag_log(); <span style="color: #888888">// take the output of the fft</span>
+            sei();
+            <span style="color: #008800; font-weight: bold">if</span> ( (fft_log_out[<span style="color: #0000DD; font-weight: bold">43</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">60</span>) <span style="color: #333333">||</span> (fft_log_out[<span style="color: #0000DD; font-weight: bold">44</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">60</span>) ) {
+              <span style="color: #888888">// do something! output a voltage to a pin to light an exterior LED</span>
+            }
+            <span style="color: #008800; font-weight: bold">else</span> {
+              <span style="color: #888888">// write 0 voltage to the exterior LED</span>
+            }
+            Serial.println(<span style="background-color: #fff0f0">&quot;start&quot;</span>);
+            <span style="color: #008800; font-weight: bold">for</span> (byte i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> FFT_N<span style="color: #333333">/</span><span style="color: #0000DD; font-weight: bold">2</span> ; i<span style="color: #333333">++</span>) { 
+              Serial.println(fft_log_out[i]); <span style="color: #888888">// send out the data</span>
+            }
+          }
+        }
+        </pre></div>
+        <p>And here is a snippet of our Acoustic code:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">#define LOG_OUT 1 </span><span style="color: #888888">// use the log output function</span>
+        <span style="color: #557799">#define FFT_N 256 </span><span style="color: #888888">// set to 256 point fft</span>
+
+        <span style="color: #557799">#include &lt;FFT.h&gt; </span><span style="color: #888888">// include the library</span>
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>() {
+          Serial.begin(<span style="color: #0000DD; font-weight: bold">9600</span>); <span style="color: #888888">// use the serial port</span>
+          TIMSK0 <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// turn off timer0 for lower jitter</span>
+          ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xe5</span>; <span style="color: #888888">// set the adc to free running mode</span>
+          ADMUX <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x40</span>; <span style="color: #888888">// use adc0</span>
+          DIDR0 <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x01</span>; <span style="color: #888888">// turn off the digital input for adc0</span>
+        }
+
+        <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+          <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #0000DD; font-weight: bold">1</span>) { <span style="color: #888888">// reduces jitter</span>
+            cli();  <span style="color: #888888">// UDRE interrupt slows this way down on arduino1.0</span>
+            <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) { <span style="color: #888888">// save 256 samples</span>
+              <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #333333">!</span>(ADCSRA <span style="color: #333333">&amp;</span> <span style="color: #005588; font-weight: bold">0x10</span>)); <span style="color: #888888">// wait for adc to be ready</span>
+              ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xf5</span>; <span style="color: #888888">// restart adc</span>
+              byte m <span style="color: #333333">=</span> ADCL; <span style="color: #888888">// fetch adc data</span>
+              byte j <span style="color: #333333">=</span> ADCH;
+              <span style="color: #333399; font-weight: bold">int</span> k <span style="color: #333333">=</span> (j <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">8</span>) <span style="color: #333333">|</span> m; <span style="color: #888888">// form into an int</span>
+              k <span style="color: #333333">-=</span> <span style="color: #005588; font-weight: bold">0x0200</span>; <span style="color: #888888">// form into a signed int</span>
+              k <span style="color: #333333">&lt;&lt;=</span> <span style="color: #0000DD; font-weight: bold">6</span>; <span style="color: #888888">// form into a 16b signed int</span>
+              fft_input[i] <span style="color: #333333">=</span> k; <span style="color: #888888">// put real data into even bins</span>
+              fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// set odd bins to 0</span>
+            }
+            fft_window(); <span style="color: #888888">// window the data for better frequency response</span>
+            fft_reorder(); <span style="color: #888888">// reorder the data before doing the fft</span>
+            fft_run(); <span style="color: #888888">// process the data in the fft</span>
+            fft_mag_log(); <span style="color: #888888">// take the output of the fft</span>
+            sei();
+            <span style="color: #008800; font-weight: bold">if</span> ( (fft_log_out[<span style="color: #0000DD; font-weight: bold">43</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">60</span>) <span style="color: #333333">||</span> (fft_log_out[<span style="color: #0000DD; font-weight: bold">44</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">60</span>) ) {
+              <span style="color: #888888">// do something! output a voltage to a pin to light an exterior LED</span>
+            }
+            <span style="color: #008800; font-weight: bold">else</span> {
+              <span style="color: #888888">// write 0 voltage to the exterior LED</span>
+            }
+            Serial.println(<span style="background-color: #fff0f0">&quot;start&quot;</span>);
+            <span style="color: #008800; font-weight: bold">for</span> (byte i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> FFT_N<span style="color: #333333">/</span><span style="color: #0000DD; font-weight: bold">2</span> ; i<span style="color: #333333">++</span>) { 
+              Serial.println(fft_log_out[i]); <span style="color: #888888">// send out the data</span>
+            }
+          }
+        }
+        </pre></div>
+        <p>Why are these programs different?  Why does the Optical program assign so many register values, while the acoustic simply uses analogRead to monitor the microphone?  The answer: analogRead cannot sample fast enough for 6 kHz.  Instead of using analogRead, we assign a set of registers that are connected to the onboard ADC on the Uno.  These control registers are linked to various controls such as ‘which pin to read from’, all of which is detailed in the ATmega328 datasheet.  Note that these register values are also used in the Acoustic program, but they are not explicitly defined in our code; they are implicitly assigned default values.  We will see how we preserve these values next.</p>
+        <p>To merge our two separate programs together without mixing up FFT data, we simply copy each segment (Acoustic and Optical)  into a “toggling” conditional statement, i.e. the program would switch back and forth in executing the Acoustic FFT and the Optical FFT continuously.  At the beginning of the Optical program, we save all of the register values that the Acoustic FFT uses, then assign our Optical-specified register values.  At the end of the Optical segment, we re-assign the ‘old’ Acoustic register values back into the registers, so as to preserve the integrity of each program.</p>
+        <p>And here’s a video of Arduinoschwarzenegger running this merged code, and detecting both the 6 kHz IR and the 660 Hz sound!</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/o3afUxsd2yU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <!-- POINT TO PHILLIPS -->
+    <section id="contact" class="map">
+      <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=phillips%20hall%2C%20ithaca&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+      <br/>
+      <small>
+        <a href="https://www.google.com/maps/place/Phillips+Hall/@42.4445807,-76.4842416,17z/data=!4m7!3m6!1s0x89d0818c816cffe3:0xfd9ee07ff22c5aa4!8m2!3d42.4445768!4d-76.4820529!9m1!1b1"></a>
+      </small>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+      <div class="container">
+        <ul class="list-inline mb-5">
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white" href="https://github.com/ece3400-team16">
+              <i class="icon-social-github"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="text-muted small mb-0">Copyright &copy; ECE 3400 2018</p>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.min.js"></script>
+
+  </body>
+
+</html>
