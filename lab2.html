@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
   <head>
@@ -181,7 +181,7 @@
         </div>
         <p>After building the circuit, we copied the FFT library into the 'libraries' folder of our Arduino IDE. We then modified the fft_adc_serial script to use analogRead() then attempted to run the fft_adc_serial script with the microphone. We ran into problems so we decided to test the circuit using the function generator.</p>
         <p>We used the function generator to generate a frequency of 660 Hz with an amplitude of 30mV. The fft_adc_serial script runs at a frequency of 9600 Hz to collect 256 samples on each run. This means that each bin should have a width of 9600/256 = 37.5Hz. Since we were generating a 660 Hz tone, we expected the tone to be recognised around the 18th (660/37.5 = 17.6) bin.</p>
-        <p>From the graph below, it is clear that the tone was recognised between the 19th and 21st bin. We used these as our bin range when writing code.</p>
+        <p>From the graph below, it is clear that the tone was recognised between the 19th and 21st bin. We used these as our bin range when writing code. This error in bin location may be due fact that actual clock speed is a bit slower than the ideal clock speed.</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
@@ -326,6 +326,86 @@
         </pre></div>
         <p>Why are these programs different?  Why does the Optical program assign so many register values, while the acoustic simply uses analogRead to monitor the microphone?  The answer: analogRead cannot sample fast enough for 6 kHz.  Instead of using analogRead, we assign a set of registers that are connected to the onboard ADC on the Uno.  These control registers are linked to various controls such as ‘which pin to read from’, all of which is detailed in the ATmega328 datasheet.  Note that these register values are also used in the Acoustic program, but they are not explicitly defined in our code; they are implicitly assigned default values.  We will see how we preserve these values next.</p>
         <p>To merge our two separate programs together without mixing up FFT data, we simply copy each segment (Acoustic and Optical)  into a “toggling” conditional statement, i.e. the program would switch back and forth in executing the Acoustic FFT and the Optical FFT continuously.  At the beginning of the Optical program, we save all of the register values that the Acoustic FFT uses, then assign our Optical-specified register values.  At the end of the Optical segment, we re-assign the ‘old’ Acoustic register values back into the registers, so as to preserve the integrity of each program.</p>
+        <p>And here is a snippet of our Merged code:</p>
+	<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">#define LOG_OUT 1 </span><span style="color: #888888">// use the log output function</span>
+        <span style="color: #557799">#define FFT_N 256 </span><span style="color: #888888">// set to 256 point fft</span>
+
+        <span style="color: #557799">#include &lt;FFT.h&gt; </span><span style="color: #888888">// include the library</span>
+
+<span style="color: #333399; font-weight: bold">int</span> old_TIMSK0, old_ADCSRA, old_ADMUX, old_DIDR0;
+
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">setup</span>() {
+  Serial.begin(<span style="color: #0000DD; font-weight: bold">9600</span>); <span style="color: #888888">// use the serial port</span>
+}
+
+<span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+  Serial.println(<span style="background-color: #fff0f0">&quot;start&quot;</span>);
+  <span style="color: #333399; font-weight: bold">bool</span> toggle <span style="color: #333333">=</span> <span style="color: #007020">true</span>;
+  <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #0000DD; font-weight: bold">1</span>) {
+    <span style="color: #008800; font-weight: bold">if</span>(toggle)
+    {
+        cli();
+        <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) {
+          fft_input[i] <span style="color: #333333">=</span> analogRead(A1); <span style="color: #888888">// &lt;-- NOTE THIS LINE</span>
+          fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+        }
+        fft_window();
+        fft_reorder();
+        fft_run();
+        fft_mag_log();
+        sei();
+       
+       <span style="color: #008800; font-weight: bold">if</span>(fft_log_out[<span style="color: #0000DD; font-weight: bold">19</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span> <span style="color: #333333">||</span> fft_log_out[<span style="color: #0000DD; font-weight: bold">20</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span> <span style="color: #333333">||</span> fft_log_out[<span style="color: #0000DD; font-weight: bold">21</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span>)
+       {
+            Serial.println(<span style="background-color: #fff0f0">&quot;We got 660 Hz&quot;</span>);
+       }
+    }
+    <span style="color: #008800; font-weight: bold">else</span>
+    {
+        <span style="color: #888888">// Store old values</span>
+        old_TIMSK0 <span style="color: #333333">=</span> TIMSK0;
+        old_ADCSRA <span style="color: #333333">=</span> ADCSRA;
+        old_ADMUX <span style="color: #333333">=</span> ADMUX;
+        old_DIDR0 <span style="color: #333333">=</span> DIDR0;
+
+        <span style="color: #888888">//Setup</span>
+        TIMSK0 <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// turn off timer0 for lower jitter</span>
+        ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xe5</span>; <span style="color: #888888">// set the adc to free running mode</span>
+        ADMUX <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x40</span>; <span style="color: #888888">// use adc0</span>
+        DIDR0 <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x01</span>; <span style="color: #888888">// turn off the digital input for adc0</span>
+
+        <span style="color: #888888">// Check</span>
+        cli();  <span style="color: #888888">// UDRE interrupt slows this way down on arduino1.0</span>
+        <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) { <span style="color: #888888">// save 256 samples</span>
+              <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #333333">!</span>(ADCSRA <span style="color: #333333">&amp;</span> <span style="color: #005588; font-weight: bold">0x10</span>)); <span style="color: #888888">// wait for adc to be ready</span>
+              ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xf5</span>; <span style="color: #888888">// restart adc</span>
+              byte m <span style="color: #333333">=</span> ADCL; <span style="color: #888888">// fetch adc data</span>
+              byte j <span style="color: #333333">=</span> ADCH;
+              <span style="color: #333399; font-weight: bold">int</span> k <span style="color: #333333">=</span> (j <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">8</span>) <span style="color: #333333">|</span> m; <span style="color: #888888">// form into an int</span>
+              k <span style="color: #333333">-=</span> <span style="color: #005588; font-weight: bold">0x0200</span>; <span style="color: #888888">// form into a signed int</span>
+              k <span style="color: #333333">&lt;&lt;=</span> <span style="color: #0000DD; font-weight: bold">6</span>; <span style="color: #888888">// form into a 16b signed int</span>
+              fft_input[i] <span style="color: #333333">=</span> k; <span style="color: #888888">// put real data into even bins</span>
+              fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// set odd bins to 0</span>
+        }
+        fft_window(); <span style="color: #888888">// window the data for better frequency response</span>
+        fft_reorder(); <span style="color: #888888">// reorder the data before doing the fft</span>
+        fft_run(); <span style="color: #888888">// process the data in the fft</span>
+        fft_mag_log(); <span style="color: #888888">// take the output of the fft</span>
+        sei();
+        <span style="color: #008800; font-weight: bold">if</span> ( (fft_log_out[<span style="color: #0000DD; font-weight: bold">43</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">60</span>) <span style="color: #333333">||</span> (fft_log_out[<span style="color: #0000DD; font-weight: bold">44</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">60</span>) ) {
+              Serial.println(<span style="background-color: #fff0f0">&quot;We got 6 kHz&quot;</span>);
+        }
+
+        <span style="color: #888888">// Restore old values</span>
+        TIMSK0 <span style="color: #333333">=</span> old_TIMSK0;
+        ADCSRA <span style="color: #333333">=</span> old_ADCSRA;
+        ADMUX <span style="color: #333333">=</span> old_ADMUX;
+        DIDR0 <span style="color: #333333">=</span> old_DIDR0;
+    }
+    toggle <span style="color: #333333">=</span> <span style="color: #333333">!</span>toggle;
+  }
+}
+</pre></div>
         <p>And here’s a video of Arduino Schwarzenegger running this merged code, and detecting both the 6 kHz IR and the 660 Hz sound!</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/o3afUxsd2yU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
