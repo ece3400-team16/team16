@@ -53,7 +53,7 @@
       <div class="container text-center my-auto">
         <h1 class="mb-1">Milestone 2</h1>
         <h3 class="mb-5">
-          <em>Don't bump into anything!</em>
+          <em>Duct Tape and Zipties</em>
         </h3>
         <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
       </div>
@@ -63,9 +63,9 @@
     <section id="about" class="content-section">
       <div class="container">
         <h1>Objective</h1>
-        <p>XXXX</p>
+        <p>After building multiple circuits throughout the previous labs and milestones, this milestone was meant to serve as the glue for all of them. Line follow, IR detection, and general robot structure were all relied on when developing the foundation for the robot's function and logic.</p>
         <h1>Procedure</h1>
-        <p>XXXX</p>
+        <p>Since there were so many parts to this lab, we had to split up and focus on the multiple aspects of work to be done. We all contributed to each part, but Orrin worked more on redesigning the robot, Luke worked more on the IR detection, Caitlin worked more on the wall detection, and Orby and Labhansh worked more on the overall structure of the FSM.</p>
       </div>
     </section>
 
@@ -88,23 +88,23 @@
             </a>
             </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-            <a href="#walls" class="text-white text-center js-scroll-trigger">
+            <a href="#solution" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fab fa-magento"></i>
               </span>
               <h4>
-                <strong>Wall Circling</strong>
+                <strong>Navigating the Maze</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
           </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-            <a href="#avoiding" class="text-white text-center js-scroll-trigger">
+            <a href="#outcome" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-broadcast-tower"></i>
               </span>
               <h4>
-                <strong>Avoiding Robots</strong>
+                <strong>The Final Outcome</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -128,62 +128,191 @@
       <div class="container">
         <h1>Rebuilding Arduino Schwarzenegger</h1>
         <h2>Breaking it Down, Building it Up</h2>
-        <p>Words</p>
-        <p>Photos below</p>
+        <p>In terms of the hardware used in this milestone, there was the need to secure the phototransistor circuit from lab 2 to the chassis, as well as new short-range IR sensors for the wall-detection.</p>
+        <p>We realized that our robot was running out of space for all the hardware we needed to run the servos, the IR hat, the IR sensors, and the audio sensors.  We redesigned our robot to have a chassis close to the ground, and servos fastened in the middle of the supports between the lower and upper chassis.  We used mostly zip ties for most joints and for connecting components, primarily because they make it easy to quickly re-design and move parts around.  Although the line sensors remained in the same general location on the robot, it is now jerky when it follows lines in the maze.  However, this is likely due to a weight imbalance.</p>
+        <p>We also added the wall IR sensors on the front, right, and left of the top chassis, tied down with zip ties.</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
+              <img class="img-fluid" src="img/milestone2/robot_newlook.JPG" alt="">
             </a>
           </div>
         </div>
+        <p>The functionality of the phototransistor is explained in full in <a href="lab2.html">lab 2</a> but to recap, it's a composed of a phototransistor circuit connected to a non-inverting amplifier. This is to ensure that any IR detected from the "hats" placed on robots can be read from farther distances, which will prove useful as the maze expands in competition.</p>
+        <p>The short-range IR sensors used for wall detection were new, and so we have to determine their functionality. The sensor uses IR signals to determine the physical presence of an object in front of it within a range of approximately 4-30 centimeters. The distance is outputted as a number threshold via an analog output. Three wall sensors were added so as to detect walls in front, to the left of, and to the right of our robot. Since there weren't any analog pins to spare for each of these sensors, they were fed into a mux with a digital output. This allowed us to provide the mux with select bits, choose one of the wall sensors to read from, and get the output through a digital pin (of which we have plenty of).</p>
+        <p>The code for reading the front wall through the mux is seen below. It's similar in logic to the other two walls.</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">frontWall</span>() {
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">12</span>, LOW);
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">13</span>, LOW);
+          <span style="color: #888888">//Serial.println(analogRead(A1));</span>
+          <span style="color: #008800; font-weight: bold">if</span> (analogRead(A1) <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">140</span>) {
+            digitalWrite(<span style="color: #0000DD; font-weight: bold">0</span>, HIGH);
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">true</span>;   <span style="color: #888888">// print the distance</span>
+          } 
+          <span style="color: #008800; font-weight: bold">else</span> {
+            digitalWrite(<span style="color: #0000DD; font-weight: bold">0</span>, LOW);
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">false</span>;
+          }
+        }
+        </pre></div>
       </div>
     </section>
 
-    <section id="walls" class="content-section bg-primary text-white">
+    <section id="solution" class="content-section bg-primary text-white">
       <div class="container">
-        <h1>Wall Circling</h1>
-        <h2>Right-hand Rule IRL</h2>
-        <p>Words</p>
-        <p>Photos below</p>
+        <h1>Navigating the Maze</h1>
+        <h2>Wall Circling</h2>
+        <h3>Right-hand Rule IRL</h3>
+        <p>In order to implement a wall detection algorithm, we added three distance sensors to our robot. We only had one analogue pin left so we read outputs from the sensors using a multiplexer. We included one sensor for each wall we wanted to be able to detect i.e one for front walls, one for left walls and one for right walls. Then we checked the threshold values for each sensor by reading the output from the serial monitor when a wall was placed at a reasonable distance away from the robot. We drew the following flow diagram in order to better help us implement our algorithm. </p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
+              <img class="img-fluid" src="img/milestone2/mil2_fpg.png" alt="">
             </a>
           </div>
         </div>
+        <p>In implementing this in the form of code, we created a state machine with three states: FOLLOW_LINE, ROBOT_DETECTED and FOLLOW_WALL. State FOLLOW_LINE was our default state and it basically checked if a robot was detected or not. If the robot was detected, the state machine moves to state ROBOT_DETECTED which makes the robot turn around and then Changes the state to state FOLLOW_LINE. However, if no robot is detected, the state machine moves to state FOLLOW_WALL which does all the wall detection. The code is as follows: </p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">loop</span>() {
+        state <span style="color: #333333">=</span> FOLLOW_LINE;
+        <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #0000DD; font-weight: bold">1</span>){
+          <span style="color: #008800; font-weight: bold">switch</span>(state){
+            <span style="color: #008800; font-weight: bold">case</span> FOLLOW_LINE:{
+              followLine();
+              <span style="color: #008800; font-weight: bold">if</span>(robotDetected()){
+               state <span style="color: #333333">=</span> ROBOT_DETECTED; 
+              }
+              <span style="color: #008800; font-weight: bold">else</span>{
+                state <span style="color: #333333">=</span> FOLLOW_WALL;
+              }
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+            <span style="color: #008800; font-weight: bold">case</span> ROBOT_DETECTED:{
+              turnAround();
+              state <span style="color: #333333">=</span> FOLLOW_LINE;
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+            <span style="color: #008800; font-weight: bold">case</span> FOLLOW_WALL:{
+              <span style="color: #008800; font-weight: bold">if</span> (frontWall()) {
+                <span style="color: #008800; font-weight: bold">if</span> (rightWall()) {
+                  <span style="color: #008800; font-weight: bold">if</span> (leftWall()) {
+                    <span style="color: #888888">//Serial.println(&quot;turning around&quot;);</span>
+                    turnAround();
+                  }
+                  <span style="color: #008800; font-weight: bold">else</span> {
+                    goToIntersection();
+                    <span style="color: #888888">//Serial.println(&quot;turning left&quot;);</span>
+                    turnLeft();
+                  }
+                }
+                <span style="color: #008800; font-weight: bold">else</span> {
+                  goToIntersection();
+                  turnRight();
+                }
+              }
+              <span style="color: #008800; font-weight: bold">else</span> {
+                <span style="color: #008800; font-weight: bold">if</span> (rightWall()) {
+                  goToIntersection(); 
+                }
+                <span style="color: #008800; font-weight: bold">else</span> {
+                  goToIntersection();
+                  turnRight(); 
+                }
+              }
+              state <span style="color: #333333">=</span> FOLLOW_LINE;      
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+          }
+        }
+        }
+        </pre></div>
+        <p>This was all put together into a program where Arnold successfully navigated a maze via right hand wall following.</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/GjY1Gg29lNw" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+        <h2>Avoiding Robots</h2>
+        <h3>We Have to Play Nicely</h3>
+        <p>To merge our Optical detection code into the state machine (wall-detection) code as described above, we used a similar approach as to when we merged the optical and acoustic programs for lab 2!  All we had to do, in short, was to save several register values at the beginning of our function that would run the FFT, execute the FFT (Optical detection) code, and then restore the old values after the FFT is completed.  If we hadn’t adjusted these register values (TIMSK0, ADCSRA, ADMUX, and DIDR0) before and after running the FFT, the servos would not run correctly (a common problem among teams) because the Servo and FFT libraries both use the same default timer.  Instead of rewriting one of those libraries, we simply cached these register values: and it works!</p>
+        <p>Below is a snippet of our optical-detection function, <code>robotDetected()</code>:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">robotDetected</span>() {
+          <span style="color: #333399; font-weight: bold">bool</span> retVal <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+          
+          <span style="color: #888888">// Store old values </span>
+          old_TIMSK0 <span style="color: #333333">=</span> TIMSK0;
+          old_ADCSRA <span style="color: #333333">=</span> ADCSRA;
+          old_ADMUX <span style="color: #333333">=</span> ADMUX;
+          old_DIDR0 <span style="color: #333333">=</span> DIDR0;
+
+          <span style="color: #888888">//Setup</span>
+          TIMSK0 <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// turn off timer0 for lower jitter</span>
+          ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xe5</span>; <span style="color: #888888">// set the adc to free running mode</span>
+          ADMUX <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x40</span>; <span style="color: #888888">// use adc0</span>
+          DIDR0 <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0x01</span>; <span style="color: #888888">// turn off the digital input for adc0</span>
+
+          <span style="color: #888888">// Check</span>
+          cli();  <span style="color: #888888">// UDRE interrupt slows this way down on arduino1.0</span>
+          <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) { <span style="color: #888888">// save 256 samples </span>
+            <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #333333">!</span>(ADCSRA <span style="color: #333333">&amp;</span> <span style="color: #005588; font-weight: bold">0x10</span>)); <span style="color: #888888">// wait for adc to be ready </span>
+            ADCSRA <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0xf5</span>; <span style="color: #888888">// restart adc</span>
+            byte m <span style="color: #333333">=</span> ADCL; <span style="color: #888888">// fetch adc data</span>
+            byte j <span style="color: #333333">=</span> ADCH;
+            <span style="color: #333399; font-weight: bold">int</span> k <span style="color: #333333">=</span> (j <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">8</span>) <span style="color: #333333">|</span> m; <span style="color: #888888">// form into an int</span>
+            k <span style="color: #333333">-=</span> <span style="color: #005588; font-weight: bold">0x0200</span>; <span style="color: #888888">// form into a signed int</span>
+            k <span style="color: #333333">&lt;&lt;=</span> <span style="color: #0000DD; font-weight: bold">6</span>; <span style="color: #888888">// form into a 16b signed int</span>
+            fft_input[i] <span style="color: #333333">=</span> k; <span style="color: #888888">// put real data into even bins</span>
+            fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>; <span style="color: #888888">// set odd bins to 0 </span>
+          } 
+          fft_window(); <span style="color: #888888">// window the data for better frequency response</span>
+          fft_reorder(); <span style="color: #888888">// reorder the data before doing the fft</span>
+          fft_run(); <span style="color: #888888">// process the data in the fft</span>
+          fft_mag_log(); <span style="color: #888888">// take the output of the fft</span>
+          sei();
+          <span style="color: #008800; font-weight: bold">if</span> ((fft_log_out[<span style="color: #0000DD; font-weight: bold">43</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">120</span>) <span style="color: #333333">||</span> (fft_log_out[<span style="color: #0000DD; font-weight: bold">44</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">120</span>)) {
+            digitalWrite(<span style="color: #0000DD; font-weight: bold">3</span>, HIGH);
+            <span style="color: #888888">//Serial.println(&quot;YES&quot;);</span>
+            retVal <span style="color: #333333">=</span> <span style="color: #007020">true</span>;
+          }
+          <span style="color: #008800; font-weight: bold">else</span> digitalWrite(<span style="color: #0000DD; font-weight: bold">3</span>, LOW);
+          
+          <span style="color: #888888">// Restore old values</span>
+          TIMSK0 <span style="color: #333333">=</span> old_TIMSK0;
+          ADCSRA <span style="color: #333333">=</span> old_ADCSRA;
+          ADMUX <span style="color: #333333">=</span> old_ADMUX;
+          DIDR0 <span style="color: #333333">=</span> old_DIDR0;
+          
+          <span style="color: #008800; font-weight: bold">return</span> retVal;
+        }
+        </pre></div>
+        <p>Again, note how the four register values are stored as “old<register>” at the beginning, and then restored at the end of the function.</p>
+        <p>As of now, our function simply returns true if IR is detected, and false if not.  Our phototransistor is currently sticking straight up on our robot; so, this means that if essentially any IR hat is emitting IR anywhere near our robot, robotDetected() will output true.  And when this function does output true, as per the state machine, at the next intersection our robot arrives at, it will make a U-turn (written in function turnAround().).</p>
+        <p>Although this is probably not desired/practical in the final competition, it allowed us to test our circuitry and software integration at a basic level.  In other words, in the future we will move our phototransistor to the front of the robot (pointing forward), so that we know robotDetected()only outputs true if a robot is in front of it.</p>
+        <p>Successful robot detection (IR detection) is shown in the final video, where both IR detection and successful maze navigation are demonstrated.</p>
+
       </div>
     </section>
 
-    <section id="avoiding" class="content-section">
+    <section id="outcome" class="content-section">
       <div class="container">
-        <h1>Avoiding Robots</h1>
-        <h2>We Have to Play Nicely</h2>
-        <p>Words</p>
-        <p>Photos below</p>
+        <h1>The Final Outcome</h1>
+        <h2>It All Came Together!</h2>
+        <p>Below, see our final iteration of Arnold in action!  Watch as he navigates a maze (right-wall-following) in the first half of the video.  In the second half, an IR hat is turned on in his vicinity (at a distance that is extremely close, mainly for the sake of recording the video), and, as expected, he U-turns at each intersection the IR hat is on!</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/P1JTwxKh0NE" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>Notice our LED circuit on the back of Arnold:</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
+              <img class="img-fluid" src="img/milestone2/robot_leds.JPG" alt="">
             </a>
           </div>
         </div>
+        <p>There are four LED indicators in this circuit.  The left-most white-colored (but actually red-light-emitting) LED lights up whenever robotDetected() = true. The other three LEDs, from left to right (Green, Yellow, Red) indicate whether a Left, Front, or Right wall,respectively, is detected.  For example, notice when Arnold must U-Turn, all three of these wall-LEDs are lit up!</p>
+        <p>As mentioned earlier, some future improvements that we may make include:
+          <ul>
+            <li>Moving the current phototransistor to the front (for frontal robot-detection)</li>
+            <li>Adding more phototransistors for advanced robot-detection capability</li>
+            <li>Soldering our current circuits into protoboards (or print PCBs)</li>
+          </ul>
+        </p>
+        <p>If we add more phototransistors (for the left and right sides of Arnold), we will need to update the robot-detection software to account for such sensor readings and make a more intelligent decision (which way to turn) based on its detection of other robots.</p>
+        <p>As the robot is increasing in size and functionality, the circuits on breadboards are getting hard to manage.  Either soldering into protoboards or printing PCBs will save weight and space on our robot (we will need to add an FPGA amongst other components soon) and will enable us to reconfigure/relocate items easily.</p>
       </div>
     </section>
 
@@ -191,20 +320,25 @@
       <div class="container">
         <h1>Road Blocks</h1>
         <h2>We Overcame a Bunch</h2>
-        <p>Words</p>
-        <p>Photos below</p>
+        <p>The servo and FFT libraries use the same timer, so both can interfere in the functioning of each other. Some proposed solutions included: </p>
+        <ul>
+          <li>We can change the FFT library due to it's complexity, but we can easily rrite our own Servo library, using related datasheet.</li>
+          <li>We can cache the affected registers (like TIMSK0, ADCSRA, ADMUX, DIDR0) before performing the FFT operation and then restore the values of these registers after performing the FFT operation. This is done because we manipulate these registers in our code,  for robot detection.</li>
+        </ul>
+        <p>We as a team, decided to give with the latter, because that was a more trivial and time-saving solution. And it works! Tried and tested. In future, if we face problems in value inconsistencies then we might switch to the former solution. But so far this solution has been fruitful.</p>
+        <p>Another issue was choosing an appropriate range for wall sensors to detect walls at a distance.</p>
+        <p>Below is a video when our wall sensors weren't calibrated well, resulting in Arnold running into a wall :(</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/15pRL8qDqz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>For now we have calibrated the robot to the values that work best with mazes present in the lab. Once, we get the exact specs (like how far are the walls) of the maze present in the competition then we will able to calibrate the wall sensors appropriately.</p>
+        <p>A roadblock that we'll most likely encounter in the future is the integration of various components together, specifically hardware. As the robot is increasing in size and functionality, the circuits on breadboards are getting hard to manage, as seen below:</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
+              <img class="img-fluid" src="img/milestone2/robot_roadblocks.JPG" alt="">
             </a>
           </div>
         </div>
+        <p>Starting next milestone/lab, we are planning to use PCBs. Hence, circuit planning and designing is our next step.</p>
       </div>
     </section>
 
