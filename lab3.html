@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Lab 3</title>
+    <link rel="shortcut icon" href="favicon-paper-plane.ico" />
+    
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <a class="menu-toggle rounded" href="#">
+      <i class="fas fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#page-top">Home</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#about">About</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#milestones">Milestones</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="js-scroll-trigger" href="index.html#labs">Labs</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="masthead d-flex">
+      <div class="container text-center my-auto">
+        <h1 class="mb-1">Lab 3</h1>
+        <h3 class="mb-5">
+          <em>Bits and Bytes of Information</em>
+        </h3>
+        <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
+      </div>
+      <div class="overlay"></div>
+    </header>
+
+    <section id="about" class="content-section">
+      <div class="container">
+        <h1>Objective</h1>
+        <p>After building circuits to detect IR and audio signals, working with sensors to sense walls, and following the lines of a maze, this lab was meant to put all of those moving parts together and display that interaction on a virtual representation of the maze.</p>
+        <h1>Procedure</h1>
+        <p>This lab required two subgroups: radio and robot. Orby and Caitlin worked with the radio, and Luke and Labhansh worked with the robot.</p>
+      </div>
+    </section>
+
+    <!-- Milestones -->
+    <section class="content-section bg-primary text-white text-center" id="milestones">
+      <div class="container">
+        <div class="content-section-heading">
+          <h2 class="mb-5">Let's Break it Down</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+              <a href="#audio" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="far fa-lightbulb"></i>
+              </span>
+              <h4>
+                <strong>Audio Detection</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+            </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+            <a href="#fsm" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-screwdriver"></i>
+              </span>
+              <h4>
+                <strong>Our State Machine</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+            <a href="#gui" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-toolbox"></i>
+              </span>
+              <h4>
+                <strong>GUI Interaction</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <a href="#speedbumps" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-car-crash"></i>
+              </span>
+              <h4>
+                <strong>Speedbumps</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="audio">
+      <div class="container">
+        <h1>Audio Detection</h1>
+        <h2>Starting at the Sound of the Bell!</h2>
+        <p>While integrating 660Hz with our existing system, we faced an interference issue wherein the IR wall sensors create noise on the DC power supply. This in return disrupts the OpAmp and microphone, because they are powered by the same DC power i.e. the 5V coming from the Arduino. This noise makes it hard to detect 660Hz and also result in false detects a few times. Many solutions were tried, including - adding capacitors to reduce noise, but it didn’t work. Even the TAs gave up! So, we came up with the following work-arounds:</p>
+        <ul>
+          <li>Add a different power source for wall sensors</li>
+          <li>Somehow cut-off the power to wall sensors at the start, since we don't need them until we receive a 660Hz signal</li>
+        </ul>
+        <p>We chose the latter (Solution 2), because we didn't want to add weight of an extra battery. Also, implementation of solution 2 was trivial in a sense that we just have to create a switch which is off at the start of the robot. This switch acts like a bridge between Vdd of Arduino and Vdd going to the wall sensors. Once we receive 660Hz, we turn the switch on, and hence powering on the wall sensors. Although after switching the wall sensors on, the 660Hz circuit stops working but it is fine because we don't require that functionality again.</p>
+        <p>For a switch, we wanted to use a MOSFET but there weren't any in the lab, so we used a BJT; and it worked just fine. We connected one digital output pin from Arduino to the BJT-Base; Connected Vdd from Arduino to the BJT-Emitter and Vdd from wall sensors to the BJT-Collector. Initially when robot boots up, we keep the Base as LOW to achieve open switch. After receiving 660Hz, we turn the Base as HIGH, hence providing supply to the wall sensors.</p>
+        <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab3/wallsensor_diagram.png" alt="">
+            </a>
+          </div>
+        </div>
+        <p>Another issue was the short supply of analog pins. This was an easy fix.  Since we had space in our mux (the mux used for the three wall sensors), we simply added the audio input to the fourth input for the mux (still using 2 selector bits for the three walls and the audio detection).  Then, we selected the correct input using the selector bits in the audio function like so:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">audio_detected</span>() {
+          <span style="color: #888888">// Store old values </span>
+          old_TIMSK0 <span style="color: #333333">=</span> TIMSK0;
+          old_ADCSRA <span style="color: #333333">=</span> ADCSRA;
+          old_ADMUX <span style="color: #333333">=</span> ADMUX;
+          old_DIDR0 <span style="color: #333333">=</span> DIDR0;
+
+          <span style="color: #333399; font-weight: bold">bool</span> ret <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+          
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">12</span>, HIGH);
+          digitalWrite(<span style="color: #0000DD; font-weight: bold">13</span>, HIGH);
+
+          cli();
+          <span style="color: #008800; font-weight: bold">for</span> (<span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">512</span> ; i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>) {
+              fft_input[i] <span style="color: #333333">=</span> analogRead(A1); <span style="color: #888888">// &lt;-- NOTE THIS LINE</span>
+              fft_input[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+            }
+          fft_window();
+          fft_reorder();
+          fft_run();
+          fft_mag_log();
+          sei();
+          cli();
+          <span style="color: #008800; font-weight: bold">if</span>(fft_log_out[<span style="color: #0000DD; font-weight: bold">19</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span> <span style="color: #333333">||</span> fft_log_out[<span style="color: #0000DD; font-weight: bold">20</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span> <span style="color: #333333">||</span> fft_log_out[<span style="color: #0000DD; font-weight: bold">21</span>] <span style="color: #333333">&gt;=</span> <span style="color: #0000DD; font-weight: bold">45</span>)
+            ret <span style="color: #333333">=</span> <span style="color: #007020">true</span>;
+
+          <span style="color: #888888">// Restore old values</span>
+          TIMSK0 <span style="color: #333333">=</span> old_TIMSK0;
+          ADCSRA <span style="color: #333333">=</span> old_ADCSRA;
+          ADMUX <span style="color: #333333">=</span> old_ADMUX;
+          DIDR0 <span style="color: #333333">=</span> old_DIDR0;
+
+          <span style="color: #008800; font-weight: bold">return</span> ret;
+        }
+        </pre></div>
+        <p>Notice how we save and restore several registers, similar to the robotDetected() (optical detection) function.  Also notice the two digitalWrite lines, which are used to select the mux input for audio.</p>
+        <p>This is essentially how we incorporated the audio.  Combined with adding the BJT switch for the wall sensors, this successfully integrated our systems.</p>
+      </div>
+    </section>
+
+    <section id="fsm" class="content-section bg-primary text-white">
+      <div class="container">
+        <h1>Our State Machine</h1>
+        <h2>Welcome to the United States of Arduino</h2>
+        <p>We had to make some changes to our state machine and the functions it used.  For example, we have two functions: goToIntersection() and followLine().  goToIntersection() is supposed to start at one intersection and go to the next one.  It calls followLine() in its loop, like so:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">goToIntersection</span>() {
+          <span style="color: #008800; font-weight: bold">for</span> ( <span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">10</span> ; i<span style="color: #333333">++</span> ){                           <span style="color: #888888">// Start following line</span>
+            followLine();
+          }
+          <span style="color: #008800; font-weight: bold">while</span> (<span style="color: #333333">!</span>(isWhite(backLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(backRight))) {       <span style="color: #888888">// While not at an intersection</span>
+            followLine();
+          }
+          <span style="color: #888888">// STOP AT THE INTERSECTION</span>
+          stopRight();
+          stopLeft();
+          delay(<span style="color: #0000DD; font-weight: bold">500</span>);
+        }
+        </pre></div>
+        <p>We edited followLine() to NOT include a loop of its own.  I.e. followLine() is simply a series of checks (conditionals) that monitor the line sensors to keep the robot on the line.
+        After this, we updated our state machine like so:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">state <span style="color: #333333">=</span> LISTEN_FOR_START;
+        <span style="color: #008800; font-weight: bold">while</span>(<span style="color: #0000DD; font-weight: bold">1</span>){
+          <span style="color: #008800; font-weight: bold">switch</span>(state){
+            <span style="color: #008800; font-weight: bold">case</span> LISTEN_FOR_START:{
+              <span style="color: #008800; font-weight: bold">if</span> ( audio_detected() ) {
+                pinMode(<span style="color: #0000DD; font-weight: bold">7</span>, OUTPUT);
+                digitalWrite(<span style="color: #0000DD; font-weight: bold">7</span>, HIGH);
+                state <span style="color: #333333">=</span> FOLLOW_LINE;
+                <span style="color: #888888">//Serial.println(&quot;We got 660&quot;);</span>
+              }
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+            <span style="color: #008800; font-weight: bold">case</span> FOLLOW_LINE:{
+              goToIntersection();
+              <span style="color: #008800; font-weight: bold">if</span>(robotDetected()){
+               state <span style="color: #333333">=</span> ROBOT_DETECTED; 
+              }
+              <span style="color: #008800; font-weight: bold">else</span>{
+                state <span style="color: #333333">=</span> FOLLOW_WALL;
+              }
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+            <span style="color: #008800; font-weight: bold">case</span> ROBOT_DETECTED:{
+              turnAround();
+              state <span style="color: #333333">=</span> FOLLOW_LINE;
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+            <span style="color: #008800; font-weight: bold">case</span> FOLLOW_WALL:{
+              <span style="color: #008800; font-weight: bold">if</span> (frontWall()) {
+                <span style="color: #008800; font-weight: bold">if</span> (rightWall()) {
+                  <span style="color: #008800; font-weight: bold">if</span> (leftWall()) { <span style="color: #888888">// F, R, L</span>
+                    <span style="color: #888888">//Serial.println(&quot;turning around&quot;);</span>
+                    turnAround();
+                  }
+                  <span style="color: #008800; font-weight: bold">else</span> {            <span style="color: #888888">// F, R, no L</span>
+                    <span style="color: #888888">//Serial.println(&quot;turning left&quot;);</span>
+                    turnLeft();
+                  }
+                }
+                <span style="color: #008800; font-weight: bold">else</span> {              <span style="color: #888888">// F, no R (L not considered)</span>
+                  turnRight();
+                }
+              }
+              <span style="color: #008800; font-weight: bold">else</span> {                <span style="color: #888888">// no F</span>
+                <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #333333">!</span>rightWall()) { <span style="color: #888888">// no F, no R</span>
+                  turnRight();
+                }
+              }
+              state <span style="color: #333333">=</span> FOLLOW_LINE;
+              <span style="color: #008800; font-weight: bold">break</span>;
+            }
+          }
+        }
+        </pre></div>
+        <p>We added a case called LISTEN_FOR_START, which essentially waits until audio_detected() is true; once we obtain 660 Hz (audio_detected()), we write a digital output high to the BJT switch, which then switches on the wall sensors; again, we incorporated this switch to turn on the wall sensors after the audio circuit is finished, because otherwise, the wall sensors caused noise in the audio circuit.</p>
+        <p>Also pay special attention to the FOLLOW_WALL case.  These conditionals only tell the robot which direction to turn.  After it decides this, it always returns to the FOLLOW_LINE state, which calls goToIntersection().</p>
+        <p>Here is a video of Arnold starting upon hearing 660 Hz, and successfully navigating a maze:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/siiCdRx6Ors" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+       <p>And here is an older video of Arnold successfully detecting IR:</p>
+      </div>
+    </section>
+
+    <section id="gui" class="content-section">
+      <div class="container">
+        <h1>GUI Interaction</h1>
+        <h2>Seeing is Believing</h2>
+        <p>The GUI provided by the lab handout was relatively simple to use. After downloading the relevant files, all that was need to do to run the GUI was a simple python command: <code>python main.py <PORT> --rows <ROWS> --cols <COLS></code>. Running this command would open a browser window with a GUI configured to the number of rows and columns given.</p>
+        <p>In order to update the interface, there were certain variables that could be declared:</p>
+        <ul>
+          <li>iamhere</li>
+          <li>west</li>
+          <li>north</li>
+          <li>east</li>
+          <li>south</li>
+          <li>robot</li>
+          <li>tshape</li>
+          <li>tcolor</li>
+        </ul>
+        <p>These variables represent the current location of the robot, the presence of walls, the detection of a robot nearby, and the existence of treasures with specific shapes and colors. This data was also passed along with integers representing x and y coordinates, similar to the statement <code>2,3,west=false,north=true,south=false</code>, which defined the robot to be at coordinate location (2,3) with a wall to the north, not to the west or south. </p>
+        <p>To start with updating the GUI, the most simple and effective way to see if the values were being updated was through changing the x and y coordinates of the virtual robot. Information from the base station is sent with a simple Serial.println statement, so global variables to store incrementing x and y values were created and placed in a Serial.println statement within the GettingStarted.ino code provided to run the radio. The python command was then run (after ensuring that the serial monitor wasn’t running, otherwise it would be using the same port that the GUI would want to receive information from) and the GUI displayed.</p>
+      <p>Because we are only allowed to use a restricted number of bits and we have a lot of data to transmit, we came up with the following data scheme to efficiently transmit the information. </p>
+
+      <p>The three bits for treasure detection will be used as follows: </p>
+      <ul>
+        <li>000: Blue square</li>
+        <li>001: Blue triangle</li>
+        <li>010: Blue diamond</li>
+        <li>011: Red square</li>
+        <li>100: Red triangle</li>
+        <li>101: Red diamond</li>
+      </ul>
+      <p>Another possibility we considered in the case where we need extra bits in order to add more information was the following:</p>
+
+      <p>In this case, the three bits for treasure shape and colour are as above and the two bits for orientation are as follows:</p>
+      <ul>
+        <li>00: North</li>
+        <li>01: East</li>
+        <li>10: South</li>
+        <li>11: West</li>
+      </ul>
+      <p>To send this information between two radios connected to two separate boards, the roles of each radio had to be defined. There are two possible roles: transmitter, responsible for sending out data; and receiver, responsible for taking in data. The default role for all radios is to be a receiver, but the role could be switched by inputting ‘T’ or ‘R’ in the serial monitor to flip to transmitter or receiver, respectively.</p>
+      <p>The GettingStarted.ino code has, within the loop function, conditionals to handle what to do if the radio is in transmitter mode versus receiver mode. Both modes incorporate the movement of data, checking to make sure the transmission was sent/received, and sending an acknowledgement signal to the other radio.</p>
+      <p>The data needed to be transmitted between the two Arduinos is in regards to the location, orientation, and spatial awareness of the robot, as described above. Some of these variables, specifically the coordinates, cardinal direction, and surrounding walls, needed to be updated and maintained within the motion of the robot itself.</p>
+      <p>The code snippets below outline the procedure used to appropriately update the values for these variables.</p>
+      <i>The definition of the global variables</i>
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">//variables for GUI---used to determine location/direction of robot----</span>
+      <span style="color: #333399; font-weight: bold">int</span> x <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+      <span style="color: #333399; font-weight: bold">int</span> y <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+      <span style="color: #333399; font-weight: bold">int</span> dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+        <span style="color: #888888">//0 --&gt; relative north</span>
+        <span style="color: #888888">//1 --&gt; relative east</span>
+        <span style="color: #888888">//2 --&gt; relative south</span>
+        <span style="color: #888888">//3 --&gt; relative west</span>
+      <span style="color: #333399; font-weight: bold">bool</span> north <span style="color: #333333">=</span> <span style="color: #007020">false</span>; <span style="color: #888888">//existence of north wall (in front)</span>
+      <span style="color: #333399; font-weight: bold">bool</span> south <span style="color: #333333">=</span> <span style="color: #007020">false</span>; <span style="color: #888888">//existence of south wall (behind)</span>
+      <span style="color: #333399; font-weight: bold">bool</span> east <span style="color: #333333">=</span> <span style="color: #007020">false</span>; <span style="color: #888888">//existence of east wall (left)</span>
+      <span style="color: #333399; font-weight: bold">bool</span> west <span style="color: #333333">=</span> <span style="color: #007020">false</span>; <span style="color: #888888">//existence of west wall (right)</span>
+      </pre></div>
+      <i>Functions to determine what direction the robot was pointing in, taking the initial direction as north</i>
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">// Orienting Functions ----------------------------------------</span>
+      <span style="color: #888888">// Used to determine coordinate location and cardinal direction of robot</span>
+      <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">orient_right_turn</span>() {
+        <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">3</span>) {
+          dir <span style="color: #333333">=</span> dir <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+        } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">3</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+        }
+      }
+
+      <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">orient_left_turn</span>() {
+        <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>) {
+          dir <span style="color: #333333">=</span> dir <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+        } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>;
+        }
+      }
+
+      <span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">orient_turn_around</span>() {
+        <span style="color: #008800; font-weight: bold">if</span> (dir  <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>;
+        } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>;
+        } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">2</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>;
+        } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">3</span>) {
+          dir <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+        }
+      }
+      </pre></div>
+      <i>Within the case FOLLOW_WALL, the sensors corresponding to each cardinal direction were defined</i>
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">case</span> FOLLOW_WALL:{
+            <span style="color: #333399; font-weight: bold">bool</span> atIntersection <span style="color: #333333">=</span> isWhite(backLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(backRight);
+            <span style="color: #008800; font-weight: bold">if</span> (atIntersection) {
+              <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>) {
+                north <span style="color: #333333">=</span> frontWall();
+                east <span style="color: #333333">=</span> rightWall();
+                west <span style="color: #333333">=</span> leftWall();
+                south <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+                y <span style="color: #333333">=</span> y <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+              }
+              <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                north <span style="color: #333333">=</span> leftWall();
+                east <span style="color: #333333">=</span> frontWall();
+                west <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+                south <span style="color: #333333">=</span> rightWall();
+                x <span style="color: #333333">=</span> x <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+              }
+              <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">2</span>) {
+                north <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+                east <span style="color: #333333">=</span> leftWall();
+                west <span style="color: #333333">=</span> rightWall();
+                south <span style="color: #333333">=</span> frontWall();
+                y <span style="color: #333333">=</span> y <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+              }
+              <span style="color: #008800; font-weight: bold">if</span> (dir <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">3</span>) {
+                north <span style="color: #333333">=</span> rightWall();
+                east <span style="color: #333333">=</span> <span style="color: #007020">false</span>;
+                west <span style="color: #333333">=</span> frontWall();
+                south <span style="color: #333333">=</span> leftWall();
+                x <span style="color: #333333">=</span> x <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>;
+              }
+              create_transmission();
+            }
+      </pre></div>
+    </section>
+
+    <section id="problems" class="content-section bg-primary text-white">
+      <div class="container">
+        <h1>Speedbumps</h1>
+        <h2>There were a few...</h2>
+        <p>The problems started with hardware issues. The second Arduino we were given wasn’t a real Arduino, and thus didn’t send the 3.3V to the radio that it needed to operate adequately. Once this issue was spotted, the radio then had to be hooked up to a direct power supply of 3.3V.</p>
+        <p>The easiest way to spot that a radio wasn’t working was to look at the addresses it displayed when the serial monitor was first opened. We hardcoded the message channels as 0x000000002CLL and 0x000000002DLL, so those were the values expected. However, there were issues where the address displayed would be 0x0000000000, even with the radios correctly powered and all of the pins on the radio, adaptor, and board probed for shorts and correct voltages.</p>
+        <p>The solution was often to re-upload the code to the board, open the serial monitor, and hope that the addresses were correct. There didn’t seem to be any reasoning as to when the radio would decide to not take in the correct message channel addresses, and similarly code, leading to hours spent attempting to pinpoint the problem only to have it work again after re-compiling the same files, with no edits having been made.</p>
+        <p>After struggling with the radio chip for a while, we decided to borrow one from another team. We then discovered that even though the radio chip was faulty, our code was also problematic. For some reason, it would only send data between the Arduinos two times before stopping as opposed to continuing to send data. The video below demonstrates the outputs on the serial monitor that we would see when we would run into this issue.</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/L1o21jV9iIM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>To figure out the cause of this problem, we added println statements after every while loop and if-else statement. By observing the outputs to the serial monitor, we were able to figure out that the cause of this problem was that one of the variables in the stopping condition of a while loop was being wrongly set in the body of the while loop. We were unable to figure out why the current variable assignment would be a problem before the end of the lab session. </p>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <!-- POINT TO PHILLIPS -->
+    <section id="contact" class="map">
+      <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=phillips%20hall%2C%20ithaca&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+      <br/>
+      <small>
+        <a href="https://www.google.com/maps/place/Phillips+Hall/@42.4445807,-76.4842416,17z/data=!4m7!3m6!1s0x89d0818c816cffe3:0xfd9ee07ff22c5aa4!8m2!3d42.4445768!4d-76.4820529!9m1!1b1"></a>
+      </small>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+      <div class="container">
+        <ul class="list-inline mb-5">
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white" href="https://github.com/ece3400-team16">
+              <i class="icon-social-github"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="text-muted small mb-0">Copyright &copy; ECE 3400 2018</p>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.min.js"></script>
+
+  </body>
+
+</html>
