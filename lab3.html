@@ -284,7 +284,13 @@
         <p>These variables represent the current location of the robot, the presence of walls, the detection of a robot nearby, and the existence of treasures with specific shapes and colors. This data was also passed along with integers representing x and y coordinates, similar to the statement <code>2,3,west=false,north=true,south=false</code>, which defined the robot to be at coordinate location (2,3) with a wall to the north, not to the west or south. </p>
         <p>To start with updating the GUI, the most simple and effective way to see if the values were being updated was through changing the x and y coordinates of the virtual robot. Information from the base station is sent with a simple Serial.println statement, so global variables to store incrementing x and y values were created and placed in a Serial.println statement within the GettingStarted.ino code provided to run the radio. The python command was then run (after ensuring that the serial monitor wasn’t running, otherwise it would be using the same port that the GUI would want to receive information from) and the GUI displayed.</p>
       <p>Because we are only allowed to use a restricted number of bits and we have a lot of data to transmit, we came up with the following data scheme to efficiently transmit the information. </p>
-
+      <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab3/bit_mapping_1.png" alt="">
+            </a>
+          </div>
+        </div>
       <p>The three bits for treasure detection will be used as follows: </p>
       <ul>
         <li>000: Blue square</li>
@@ -295,7 +301,13 @@
         <li>101: Red diamond</li>
       </ul>
       <p>Another possibility we considered in the case where we need extra bits in order to add more information was the following:</p>
-
+      <div class="row no-gutters">
+          <div class="col-lg-6">
+            <a class="portfolio-item">
+              <img class="img-fluid" src="img/lab3/bit_mapping_2.png" alt="">
+            </a>
+          </div>
+        </div>
       <p>In this case, the three bits for treasure shape and colour are as above and the two bits for orientation are as follows:</p>
       <ul>
         <li>00: North</li>
