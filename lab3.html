@@ -331,7 +331,7 @@
         <span style="color: #008800; font-weight: bold">return</span> result;
       }
       </pre></div>
-      <p>At first, to check that transmissions from the trasnmitter radio were appropriately received by the base station, we hardcoded values for x, y, and data to be sent. The video below shows the GUI responding to these new values and displaying the robot at a new place in the maze:</p>
+      <p>At first, to check that transmissions from the transmitter radio were appropriately received by the base station, we hardcoded values for x, y, and data to be sent. The video below shows the GUI responding to these new values and displaying the robot at a new place in the maze:</p>
       <iframe width="560" height="315" src="https://www.youtube.com/embed/9oHhrk8y3dc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       <p>In order to simulate robot movement, w­­e created a counter variable and three arrays: data_array, x_array and y_array.</p>
       <p>We then stored values in these arrays according to the movement we wanted to simulate. Within the loop function, if the radio was transmitting, we looped over the values in each of the arrays, obtaining and transmitting values of x, y and data (from their respective arrays) as well as incrementing the value of the counter variable after each iteration. On the other hand, if the radio was receiving, we printed an API acceptable string to the GUI. This was done using a helper function create_gui_string which takes in a 3 element array and uses various conditionals to return an API acceptable string. </p>
