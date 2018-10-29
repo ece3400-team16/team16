@@ -133,8 +133,7 @@
           <li>Add a different power source for wall sensors</li>
           <li>Somehow cut-off the power to wall sensors at the start, since we don't need them until we receive a 660Hz signal</li>
         </ul>
-        <p>We chose the latter (Solution 2), because we didn't want to add weight of an extra battery. Also, implementation of solution 2 was trivial in a sense that we just have to create a switch which is off at the start of the robot. This switch acts like a bridge between Vdd of Arduino and Vdd going to the wall sensors. Once we receive 660Hz, we turn the switch on, and hence powering on the wall sensors. Although after switching the wall sensors on, the 660Hz circuit stops working but it is fine because we don't require that functionality again.</p>
-        <p>For a switch, we wanted to use a MOSFET but there weren't any in the lab, so we used a BJT; and it worked just fine. We connected one digital output pin from Arduino to the BJT-Base; Connected Vdd from Arduino to the BJT-Emitter and Vdd from wall sensors to the BJT-Collector. Initially when robot boots up, we keep the Base as LOW to achieve open switch. After receiving 660Hz, we turn the Base as HIGH, hence providing supply to the wall sensors.</p>
+        <p>We chose the latter (Solution 2), because we didn't want to add weight of an extra battery. But eventually we had to use the former because the wall sensors values were varying a lot due to noise produced in Vdd line. So, we just separated the wall sensors to a different power source; And everything started working fine.</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
@@ -189,7 +188,7 @@
         <h2>Welcome to the United States of Arduino</h2>
         <p>We had to make some changes to our state machine and the functions it used.  For example, we have two functions: goToIntersection() and followLine().  goToIntersection() is supposed to start at one intersection and go to the next one.  It calls followLine() in its loop, like so:</p>
         <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">goToIntersection</span>() {
-          <span style="color: #008800; font-weight: bold">for</span> ( <span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">10</span> ; i<span style="color: #333333">++</span> ){                           <span style="color: #888888">// Start following line</span>
+          <span style="color: #008800; font-weight: bold">for</span> ( <span style="color: #333399; font-weight: bold">int</span> i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span> ; i <span style="color: #333333">&lt;</span> <span style="color: #0000DD; font-weight: bold">1000</span> ; i<span style="color: #333333">++</span> ){                           <span style="color: #888888">// Start following line</span>
             followLine();
           }
           <span style="color: #008800; font-weight: bold">while</span> (<span style="color: #333333">!</span>(isWhite(backLeft) <span style="color: #333333">&amp;&amp;</span> isWhite(backRight))) {       <span style="color: #888888">// While not at an intersection</span>
@@ -259,9 +258,11 @@
         </pre></div>
         <p>We added a case called LISTEN_FOR_START, which essentially waits until audio_detected() is true; once we obtain 660 Hz (audio_detected()), we write a digital output high to the BJT switch, which then switches on the wall sensors; again, we incorporated this switch to turn on the wall sensors after the audio circuit is finished, because otherwise, the wall sensors caused noise in the audio circuit.</p>
         <p>Also pay special attention to the FOLLOW_WALL case.  These conditionals only tell the robot which direction to turn.  After it decides this, it always returns to the FOLLOW_LINE state, which calls goToIntersection().</p>
-        <p>Here is a video of Arnold starting upon hearing 660 Hz, and successfully navigating a maze:</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/siiCdRx6Ors" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-       <p>And here is an older video of Arnold successfully detecting IR:</p>
+        <p>Here is a video of Arnold starting upon hearing 660 Hz, successfully navigating a maze, AND detecting IR:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dVJtgPkwJ7I" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <p>Recall that when Arnold detects IR at an intersection, he will execute a U-turn.</p>
+        <p>And here is a video of the same skills demonstrated in a different maze format!</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/T3wQ-2ZjDU8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </section>
 
@@ -282,7 +283,8 @@
           <li>tcolor</li>
         </ul>
         <p>These variables represent the current location of the robot, the presence of walls, the detection of a robot nearby, and the existence of treasures with specific shapes and colors. This data was also passed along with integers representing x and y coordinates, similar to the statement <code>2,3,west=false,north=true,south=false</code>, which defined the robot to be at coordinate location (2,3) with a wall to the north, not to the west or south. </p>
-        <p>To start with updating the GUI, the most simple and effective way to see if the values were being updated was through changing the x and y coordinates of the virtual robot. Information from the base station is sent with a simple Serial.println statement, so global variables to store incrementing x and y values were created and placed in a Serial.println statement within the GettingStarted.ino code provided to run the radio. The python command was then run (after ensuring that the serial monitor wasn’t running, otherwise it would be using the same port that the GUI would want to receive information from) and the GUI displayed.</p>
+        <p>To start with updating the GUI, the most simple and effective way to see if the values were being updated was through changing the x and y coordinates of the virtual robot. Information from the base station is sent with a simple Serial.println statement, so global variables to store incrementing x and y values were created and placed in a Serial.println statement within the GettingStarted.ino code provided to run the radio. The python command was then run (after ensuring that the serial monitor wasn’t running, otherwise it would be using the same port that the GUI would want to receive information from) and the GUI displayed. A video of this is below:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/XJE0isfK4c8" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       <p>Because we are only allowed to use a restricted number of bits and we have a lot of data to transmit, we came up with the following data scheme to efficiently transmit the information. </p>
       <div class="row no-gutters">
           <div class="col-lg-6">
@@ -300,24 +302,64 @@
         <li>100: Red triangle</li>
         <li>101: Red diamond</li>
       </ul>
-      <p>Another possibility we considered in the case where we need extra bits in order to add more information was the following:</p>
-      <div class="row no-gutters">
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab3/bit_mapping_2.png" alt="">
-            </a>
-          </div>
-        </div>
-      <p>In this case, the three bits for treasure shape and colour are as above and the two bits for orientation are as follows:</p>
-      <ul>
-        <li>00: North</li>
-        <li>01: East</li>
-        <li>10: South</li>
-        <li>11: West</li>
-      </ul>
       <p>To send this information between two radios connected to two separate boards, the roles of each radio had to be defined. There are two possible roles: transmitter, responsible for sending out data; and receiver, responsible for taking in data. The default role for all radios is to be a receiver, but the role could be switched by inputting ‘T’ or ‘R’ in the serial monitor to flip to transmitter or receiver, respectively.</p>
       <p>The GettingStarted.ino code has, within the loop function, conditionals to handle what to do if the radio is in transmitter mode versus receiver mode. Both modes incorporate the movement of data, checking to make sure the transmission was sent/received, and sending an acknowledgement signal to the other radio.</p>
-      <p>The data needed to be transmitted between the two Arduinos is in regards to the location, orientation, and spatial awareness of the robot, as described above. Some of these variables, specifically the coordinates, cardinal direction, and surrounding walls, needed to be updated and maintained within the motion of the robot itself.</p>
+      <p>The data needed to be transmitted between the two Arduinos is in regards to the location, orientation, and spatial awareness of the robot, as described above. Some of these variables, specifically the coordinates, cardinal direction, and surrounding walls, needed to be updated and maintained within the motion of the robot itself. We created a helper function called create_transmission to create the data to be transmitted to the receiver using the data scheme above. This helper function is shown below: </p>
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">byte <span style="color: #0066BB; font-weight: bold">create_transmission</span>(<span style="color: #333399; font-weight: bold">bool</span> north<span style="color: #333333">=</span><span style="color: #007020">false</span>,  <span style="color: #333399; font-weight: bold">bool</span> east<span style="color: #333333">=</span><span style="color: #007020">false</span>, <span style="color: #333399; font-weight: bold">bool</span> south<span style="color: #333333">=</span><span style="color: #007020">false</span>, <span style="color: #333399; font-weight: bold">bool</span> west<span style="color: #333333">=</span><span style="color: #007020">false</span>, <span style="color: #333399; font-weight: bold">bool</span> robot_detected<span style="color: #333333">=</span><span style="color: #007020">false</span>) {
+        byte result <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>b00000000;
+        byte tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>b00000000;
+        <span style="color: #008800; font-weight: bold">if</span> (north) {
+          tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">7</span>;
+          result <span style="color: #333333">=</span> result <span style="color: #333333">|</span> tmp;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> (east) {
+          tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">6</span>;
+          result <span style="color: #333333">=</span> result <span style="color: #333333">|</span> tmp;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> (south) {
+          tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">5</span>;
+          result <span style="color: #333333">=</span> result <span style="color: #333333">|</span> tmp;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> (west) {
+          tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">4</span>;
+          result <span style="color: #333333">=</span> result <span style="color: #333333">|</span> tmp;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> (robot_detected) {
+          tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">3</span>;
+          result <span style="color: #333333">=</span> result <span style="color: #333333">|</span> tmp;
+        }
+        <span style="color: #008800; font-weight: bold">return</span> result;
+      }
+      </pre></div>
+      <p>At first, to check that transmissions from the trasnmitter radio were appropriately received by the base station, we hardcoded values for x, y, and data to be sent. The video below shows the GUI responding to these new values and displaying the robot at a new place in the maze:</p>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/9oHhrk8y3dc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <p>In order to simulate robot movement, w­­e created a counter variable and three arrays: data_array, x_array and y_array.</p>
+      <p>We then stored values in these arrays according to the movement we wanted to simulate. Within the loop function, if the radio was transmitting, we looped over the values in each of the arrays, obtaining and transmitting values of x, y and data (from their respective arrays) as well as incrementing the value of the counter variable after each iteration. On the other hand, if the radio was receiving, we printed an API acceptable string to the GUI. This was done using a helper function create_gui_string which takes in a 3 element array and uses various conditionals to return an API acceptable string. </p>
+      <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">String <span style="color: #0066BB; font-weight: bold">create_gui_string</span>(byte data[<span style="color: #0000DD; font-weight: bold">3</span>]) {
+        String result <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&quot;&quot;</span>;
+        <span style="color: #888888">//adding x, y</span>
+        result <span style="color: #333333">=</span> String(data[<span style="color: #0000DD; font-weight: bold">0</span>]) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,&quot;</span> <span style="color: #333333">+</span> String(data[<span style="color: #0000DD; font-weight: bold">1</span>]);
+        <span style="color: #888888">//decoding existence of walls and other robots</span>
+        byte tmp <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>b00000000;
+        <span style="color: #008800; font-weight: bold">if</span> ((data[<span style="color: #0000DD; font-weight: bold">2</span>] <span style="color: #333333">&amp;</span> (<span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">7</span>)) <span style="color: #333333">!=</span> tmp) {
+          result <span style="color: #333333">=</span> result <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,north=true&quot;</span>;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> ((data[<span style="color: #0000DD; font-weight: bold">2</span>] <span style="color: #333333">&amp;</span> (<span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">6</span>)) <span style="color: #333333">!=</span> tmp) {
+          result <span style="color: #333333">=</span> result <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,east=true&quot;</span>;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> ((data[<span style="color: #0000DD; font-weight: bold">2</span>] <span style="color: #333333">&amp;</span> (<span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">5</span>)) <span style="color: #333333">!=</span> tmp) {
+          result <span style="color: #333333">=</span> result <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,south=true&quot;</span>;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> ((data[<span style="color: #0000DD; font-weight: bold">2</span>] <span style="color: #333333">&amp;</span> (<span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">4</span>)) <span style="color: #333333">!=</span> tmp) {
+          result <span style="color: #333333">=</span> result <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,west=true&quot;</span>;
+        }
+        <span style="color: #008800; font-weight: bold">if</span> ((data[<span style="color: #0000DD; font-weight: bold">2</span>] <span style="color: #333333">&amp;</span> (<span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> <span style="color: #0000DD; font-weight: bold">3</span>)) <span style="color: #333333">!=</span> tmp) {
+          result <span style="color: #333333">=</span> result <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot;,robot=true&quot;</span>;
+        }
+        <span style="color: #008800; font-weight: bold">return</span> result;
+      }
+      </pre></div>
+      <p>For the simulation of our robot's actual movements on the GUI, the following code was written and integrated within our general Arduino file:</p>
       <p>The code snippets below outline the procedure used to appropriately update the values for these variables.</p>
       <i>The definition of the global variables</i>
       <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">//variables for GUI---used to determine location/direction of robot----</span>
@@ -396,7 +438,7 @@
                 south <span style="color: #333333">=</span> leftWall();
                 x <span style="color: #333333">=</span> x <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>;
               }
-              create_transmission();
+              create_transmission(x,y,data);
             }
       </pre></div>
     </section>
