@@ -102,7 +102,7 @@
         </div>
         <div class="row">
             <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-              <a href="#understanding_arduinos" class="text-white text-center js-scroll-trigger">
+              <a href="#pll" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="far fa-lightbulb"></i>
               </span>
@@ -113,7 +113,7 @@
             </a>
             </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-            <a href="#analyzing_potentiometers" class="text-white text-center js-scroll-trigger">
+            <a href="#arduino" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-screwdriver"></i>
               </span>
@@ -124,7 +124,7 @@
             </a>
           </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-            <a href="#assembling_arduino" class="text-white text-center js-scroll-trigger">
+            <a href="#fpga" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-toolbox"></i>
               </span>
@@ -135,7 +135,7 @@
             </a>
           </div>
           <div class="col-lg-3 col-md-6">
-            <a href="#learning_to_drive" class="text-white text-center js-scroll-trigger">
+            <a href="#problems" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-car-crash"></i>
               </span>
@@ -149,38 +149,100 @@
       </div>
     </section>
 
-    <section class="content-section" id="understanding_arduinos">
+    <section class="content-section" id="pll">
       <div class="container">
-        <h1>XXXXX</h1>
-        <h2>description</h2>
-        <p>Generate code with hilite.me</p>
+        <h1>Phase Locked Loop (PLL)</h1>
+        <p>There are multiple clocks of different frequencies needed in our system; in order to lock them all together we initialized a phased- locked- loop (this ensures that there is minimal clock skew in our system).  We created another file with an overall clock at 50 MHz.  We then initialized each of our output clocks at 24, 25, and 50 MHz with 50% duty cycles.  We then assigned an output pin for the 24 MHz clock (to be wired to the camera).</p>
       </div>
     </section>
 
     <section id="analyzing_potentiometers" class="content-section bg-primary text-white">
       <div class="container">
-        <div class="row no-gutters">
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
-            </a>
-          </div>
-        </div>
+        <h1>Arduino Side</h1>
+        <h3>Registers</h3>
+        <p>The registers we write to are described in the following table:</p>
+        <table style="width:100%">
+          <tr>
+            <th>Register</th>
+            <th>Address</th> 
+            <th>Value</th>
+            <th>Purpose</th>
+          </tr>
+          <tr>
+            <td>COM7</td>
+            <td>0x12</td> 
+            <td>0x80</td>
+            <td>Resets all registers to default values</td>
+          </tr>
+          <tr>
+            <td>COM3</td>
+            <td>0x0C</td> 
+            <td>0x08</td>
+            <td>Enables scaling</td>
+          </tr>
+          <tr>
+            <td>CLKRC</td>
+            <td>0x11</td>
+            <td>0xC0</td>
+            <td>Enables ‘double-clocking’ and tells camera to use external clock</td>
+          </tr>
+          <tr>
+            <td>COM15</td>
+            <td>0x40</td>
+            <td>0xD0</td>
+            <td>Set output resolution to RGB-565</td>
+          </tr>
+          <tr>
+            <td>COM7</td>
+            <td>0x12</td>
+            <td>0x0E, 0x0C</td>
+            <td>QCIF format, and Color bar test enable, QCIF format, and Color bar test disable</td>
+          </tr>
+          <tr>
+            <td>COM17</td>
+            <td>0x42</td>
+            <td>0x08, 0x00</td>
+            <td>Enable color bar test, Disable color bar test</td>
+          </tr>
+          <tr>
+            <td>MVFP</td>
+            <td>0x1E</td>
+            <td>0x30</td>
+            <td>Flip and mirror the image</td>
+          </tr>
+        </table>
+        <p>Again, these values were determined by looking through the OV7670 data sheet.</p>
+        <h3>Writing Register Values from Arduino</h3>
+        <p>The wiring for the camera-Arduino is shown in the following picture:</p>
+        <img>
+        <p>On the camera, the pins SIOC and SIOD correspond to SCL and SDA respectively.</p>
+        <p>And here’s a picture of our Arduino/Camera system:</p>
+        <h3>Receiving FPGA data</h3>
+        <p>We initialized 2 output pins in our Verilog code that would carry either 00 (neither), 01 (blue), or 10 (red).  We then analyzed the output of the image processor (the RESULT variable) by linking each bit with an LED on the FPGA and examining which LEDs were lit.  We used the LEDs to test whether our image processor worked, before hooking these pins from the FPGA up to the Arduino.  The two pins were then directly connected into digital input pins on the Arduino with their variables initialized in the code.  In order to show the code worked, we held a color test image up to the camera and then had the code print out whether it was red or blue.</p>
       </div>
     </section>
 
-    <section id="assembling_arduino" class="content-section">
+    <section id="fpga" class="content-section">
       <div class="container">
-      
+        <h1>FPGA Side</h1>
+        <h3>Displaying M9K memory contents</h3>
+        <p>One of our initial tasks was to write a pattern directly into the FPGA memory and display it on the screen.  We created an always block that updated on the positive edge of the 25MHz clock, that would enable memory writing if the X and Y addresses were inside the picture frame. We then wrote in colors directly into the pixel_data_RGB332 variable which would then be stored in the current address in memory, depending on whether they were in the range for the shape we wanted to create.  The X and Y write addresses were subsequently changed as long as they were still within the screen width and height.</p>
+        <p>We successfully outputted our test pattern (a simple/arbitrary cross) as you can see below:</p>
+        <img>
+        <h3>Down-sampler: color bar and camera feed</h3>
+        <p>The downsampler takes the RGB 565 format image from the camera and then turns it into 8 bits that can be stored in our memory.  RGB 565 format for pixels means one pixel equates to two bytes of information (first 5 pixels red, next 3 green, then next 3 green last 5 blue).  We essentially parse the 565 data into 332 data by selecting the most significant digits for each color and enter them into the 8 bit 332 format.</p>
+        <p>When the camera V_Sync signal is high, this signals the end of an entire frame, so we reset the X and Y addresses.  When V_Sync is low, and HREF was high, pixel data is transmitted row by row.  Since the RGB 565 pixel data comes in bytes, and each pixel is two bytes of 565 data, we have to read across two clock cycles (of PCLK, outputted from the camera) to get the full info of one pixel.  We use an auxiliary variable to keep track of which pixel (first or second) we are receiving, and store the camera input data in a register.  When HREF is low again, the row is over and the Y address updates (we move down a row).</p>
+        <p>Here is our down-sampler code:</p>
+        <p>In order to test that the correct colors were being constructed after the downsampling, we updated the registers in the Arduino code to show a color bar and then checked to see that the correct colors were shown.  Below is a picture of the color bar test:</p>
+        <img>
+        <p>We had trouble getting a consistent camera feed.  While we managed to get reasonable colors and defined shapes, our video seemed to update in bars, which was best described as “flickering”. Despite looking through our code many times, analyzing the clocks, replacing all the hardware, and rewiring at least once, we were unable to get a clean image unless the gain was turned very low, at which point the feed was very dark.</p>
+        <h3>Color Distinguishment</h3>
+        <p>We wrote the image processor module to identify what was the dominant color of the frame it was seeing.  We created registers which update each time the RGB pixels from the downsampler with the color that is the largest in those bits (if the 2 of the 3 red read 1, the red updates, and if the 2 blue are high, the blue register updates).  At the end of a frame, the totals are compared and the output RESULT is assigned to either 9’b01 if blue or 9’b10 if red, before all the variables are reset.</p>
+        <p>To test the image processor we assigned LEDs on the FPGA to light up depending on the output and then saw if the right ones lit up according to the test color.</p>
       </div>
     </section>
 
-    <section id="learning_to_drive" class="content-section bg-primary text-white">
+    <section id="problems" class="content-section bg-primary text-white">
       <div class="container">
         
       </div>
