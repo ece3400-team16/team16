@@ -63,7 +63,7 @@
     <section id="about" class="content-section">
       <div class="container">
         <h1>Objective</h1>
-        <p>For this lab, we used an FPGA (specifically, a DE0-Nano board), an Arduino, and an OV7670 camera, to create a functional camera and a system that distinguishes red and blue color.  The FPGA is used to clock the camera and read from the camera’s byte output, and transform said output into data that can be stored in memory and displayed on a screen.  The Arduino is simply used to write register data to the camera.  The FPGA also transmits data (majority-red/blue color data) to the Arduino.  This entire system will be further expanded and implemented on our robot for the final competition, which involves detecting different colored (red/blue) and different shaped treasures.</p>
+        <p>For this lab, we used an FPGA ( a DE0-Nano board), an Arduino, and an OV7670 camera, to create a system that distinguishes red and blue color.  The FPGA is used to clock the camera and read from the camera’s byte output, and transform said output into data that can be stored in memory and displayed on a screen.  The Arduino is used to write register data to the camera and receive color detection information from the FPGA.</p>
         <h1>Procedure</h1>
         <p>The main goal in Lab 4 was to get the camera up and running and have our system distinguish between red and blue color, as well as communicate whether a treasure even exists.  Although our live camera feed is still quite imperfect (this will likely cause problems for shape-detection further down the road), our system does indeed successfully meet this overarching goal of distinguishing color.  The steps we took to complete this task are outlined below:</p>
         <ul>
@@ -140,7 +140,7 @@
                 <i class="fas fa-car-crash"></i>
               </span>
               <h4>
-                <strong>Roadblocks and Obstacles</strong>
+                <strong>Summary and Conclusions</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -223,10 +223,11 @@
             </div>
           </div>
         </div>
-        <p>On the camera, the pins SIOC and SIOD correspond to SCL and SDA respectively.</p>
-        <p>And here’s a picture of our Arduino/Camera system:</p>
+        <p>Note: On the camera, the pins SIOC and SIOD correspond to SCL and SDA respectively.</p>
         <h3>Receiving FPGA data</h3>
-        <p>We initialized 2 output pins in our Verilog code that would carry either 00 (neither), 01 (blue), or 10 (red).  We then analyzed the output of the image processor (the RESULT variable) by linking each bit with an LED on the FPGA and examining which LEDs were lit.  We used the LEDs to test whether our image processor worked, before hooking these pins from the FPGA up to the Arduino.  The two pins were then directly connected into digital input pins on the Arduino with their variables initialized in the code.  In order to show the code worked, we held a color test image up to the camera and then had the code print out whether it was red or blue.</p>
+        <p>We initialized 2 output pins in our Verilog code that would carry either 00 (neither), 01 (blue), or 10 (red).  We then analyzed the output of the image processor (the RESULT variable) by linking each bit with an LED on the FPGA and examining which LEDs were lit.  We used the LEDs to test whether our image processor worked, before hooking these pins from the FPGA up to the Arduino.  The two pins were then directly connected into digital input pins on the Arduino with their variables initialized in the code.  In order to show the code worked, we held a color test image up to the camera and then had the code print out whether it was red or blue. This function is relatively simple (just reading certain digital pins and outputting to serial monitor accordingly), and will be left off for brevity.</p>
+        <p>See a video of the FPGA sending color data to the Arduino:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sju5XPj3VnM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </section>
 
@@ -236,26 +237,150 @@
         <h3>Displaying M9K memory contents</h3>
         <p>One of our initial tasks was to write a pattern directly into the FPGA memory and display it on the screen.  We created an always block that updated on the positive edge of the 25MHz clock, that would enable memory writing if the X and Y addresses were inside the picture frame. We then wrote in colors directly into the pixel_data_RGB332 variable which would then be stored in the current address in memory, depending on whether they were in the range for the shape we wanted to create.  The X and Y write addresses were subsequently changed as long as they were still within the screen width and height.</p>
         <p>We successfully outputted our test pattern (a simple/arbitrary cross) as you can see below:</p>
-        <img>
+        <div class="container">
+          <div class="row no-gutters">
+            <div class="col-lg-6">
+              <a class="portfolio-item">
+                <img class="img-fluid" src="img/lab4/cross.jpg" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
         <h3>Down-sampler: color bar and camera feed</h3>
         <p>The downsampler takes the RGB 565 format image from the camera and then turns it into 8 bits that can be stored in our memory.  RGB 565 format for pixels means one pixel equates to two bytes of information (first 5 pixels red, next 3 green, then next 3 green last 5 blue).  We essentially parse the 565 data into 332 data by selecting the most significant digits for each color and enter them into the 8 bit 332 format.</p>
         <p>When the camera V_Sync signal is high, this signals the end of an entire frame, so we reset the X and Y addresses.  When V_Sync is low, and HREF was high, pixel data is transmitted row by row.  Since the RGB 565 pixel data comes in bytes, and each pixel is two bytes of 565 data, we have to read across two clock cycles (of PCLK, outputted from the camera) to get the full info of one pixel.  We use an auxiliary variable to keep track of which pixel (first or second) we are receiving, and store the camera input data in a register.  When HREF is low again, the row is over and the Y address updates (we move down a row).</p>
         <p>Here is our down-sampler code:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">//Down-sampler</span>
+        <span style="color: #008800; font-weight: bold">always</span> @ ( <span style="color: #008800; font-weight: bold">posedge</span> <span style="color: #003366; font-weight: bold">P_CLOCK</span> ) <span style="color: #008800; font-weight: bold">begin</span>
+        <span style="color: #008800; font-weight: bold">if</span> ( old_vsync <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">0</span> <span style="color: #333333">&amp;&amp;</span> <span style="color: #003366; font-weight: bold">V_SYNC</span><span style="color: #333333">==</span><span style="color: #005588; font-weight: bold">1</span> )<span style="color: #008800; font-weight: bold">begin</span>    <span style="color: #888888">// V_SYNC marks the end of</span>
+        <span style="color: #888888">// a frame: reset X and Y.</span>
+              <span style="color: #003366; font-weight: bold">W_EN</span>   <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;       <span style="color: #888888">// Don&#39;t write to memory!</span>
+                <span style="color: #003366; font-weight: bold">X_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">15</span><span style="color: #0000DD; font-weight: bold">&#39;d0</span>;
+                <span style="color: #003366; font-weight: bold">Y_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">15</span><span style="color: #0000DD; font-weight: bold">&#39;d0</span>;
+          i      <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+            <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> ((<span style="color: #003366; font-weight: bold">HREF</span> <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">0</span>) <span style="color: #333333">&amp;&amp;</span> (old_href <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">begin</span>    <span style="color: #888888">// End of Row.</span>
+              <span style="color: #003366; font-weight: bold">W_EN</span>   <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;                <span style="color: #888888">// Don&#39;t write anything here!!</span>
+                <span style="color: #003366; font-weight: bold">X_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">15</span><span style="color: #0000DD; font-weight: bold">&#39;d0</span>;            <span style="color: #888888">// Beginning of next row</span>
+                <span style="color: #003366; font-weight: bold">Y_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #003366; font-weight: bold">Y_ADDR</span> <span style="color: #333333">+</span> <span style="color: #005588; font-weight: bold">15</span><span style="color: #0000DD; font-weight: bold">&#39;d1</span>;   <span style="color: #888888">// Move down to next row</span>
+                i      <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+            <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">begin</span>
+                <span style="color: #003366; font-weight: bold">Y_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #003366; font-weight: bold">Y_ADDR</span>;
+                <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #003366; font-weight: bold">HREF</span> <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">1</span>) <span style="color: #008800; font-weight: bold">begin</span>
+                      <span style="color: #008800; font-weight: bold">if</span> (i <span style="color: #333333">==</span> <span style="color: #005588; font-weight: bold">0</span>)<span style="color: #008800; font-weight: bold">begin</span>   <span style="color: #888888">// First byte received of two.</span>
+        <span style="color: #888888">//(Blue info)</span>
+                                  <span style="color: #003366; font-weight: bold">W_EN</span>       <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>; <span style="color: #888888">// DON&#39;T WRITE TO</span>
+         <span style="color: #888888">// MEMORY YET!</span>
+                                  temp[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>]   <span style="color: #333333">&lt;=</span> CameraInput[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>];
+        <span style="color: #888888">// Save blue info!</span>
+                                  i          <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">1</span>;
+                                  <span style="color: #003366; font-weight: bold">X_ADDR</span>     <span style="color: #333333">&lt;=</span> <span style="color: #003366; font-weight: bold">X_ADDR</span>;
+                            <span style="color: #008800; font-weight: bold">end</span>
+                      <span style="color: #008800; font-weight: bold">else</span>                     <span style="color: #888888">// i = 1 : second byte!</span>
+        <span style="color: #888888">// (Red &amp; Green info)</span>
+                            <span style="color: #008800; font-weight: bold">begin</span>
+                                  pixel_data_RGB332[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">5</span>] <span style="color: #333333">&lt;=</span> CameraInput[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">5</span>];
+        <span style="color: #888888">// Red</span>
+                                  pixel_data_RGB332[<span style="color: #005588; font-weight: bold">4</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">2</span>] <span style="color: #333333">&lt;=</span> CameraInput[<span style="color: #005588; font-weight: bold">2</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>];
+        <span style="color: #888888">// Green   </span>
+        pixel_data_RGB332[<span style="color: #005588; font-weight: bold">1</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>] <span style="color: #333333">&lt;=</span> temp[<span style="color: #005588; font-weight: bold">4</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">3</span>];
+        <span style="color: #888888">// Blue</span>
+                                  <span style="color: #888888">// Now the pixel is finished!  Update</span>
+        <span style="color: #888888">// WRITE_ADDRESS and enable memory writing</span>
+                                  <span style="color: #003366; font-weight: bold">W_EN</span>     <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">1</span>; <span style="color: #888888">// Memory is written.</span>
+                              <span style="color: #003366; font-weight: bold">X_ADDR</span>   <span style="color: #333333">&lt;=</span> <span style="color: #003366; font-weight: bold">X_ADDR</span> <span style="color: #333333">+</span> <span style="color: #005588; font-weight: bold">15</span><span style="color: #0000DD; font-weight: bold">&#39;d1</span>; <span style="color: #888888">// Update X</span>
+                                  i          <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;
+                            <span style="color: #008800; font-weight: bold">end</span>
+                <span style="color: #008800; font-weight: bold">end</span>
+              <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">begin</span>
+                    <span style="color: #003366; font-weight: bold">X_ADDR</span> <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;
+                    i      <span style="color: #333333">&lt;=</span> <span style="color: #005588; font-weight: bold">0</span>;  
+              <span style="color: #008800; font-weight: bold">end</span>
+            <span style="color: #008800; font-weight: bold">end</span>
+            old_vsync <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">V_SYNC</span>;
+            old_href  <span style="color: #333333">=</span> <span style="color: #003366; font-weight: bold">HREF</span>;
+        <span style="color: #008800; font-weight: bold">end</span>
+        </pre></div>
         <p>In order to test that the correct colors were being constructed after the downsampling, we updated the registers in the Arduino code to show a color bar and then checked to see that the correct colors were shown.  Below is a picture of the color bar test:</p>
-        <img>
+        <div class="container">
+          <div class="row no-gutters">
+            <div class="col-lg-6">
+              <a class="portfolio-item">
+                <img class="img-fluid" src="img/lab4/color_bar.JPG" alt="">
+              </a>
+            </div>
+          </div>
+        </div>
         <p>We had trouble getting a consistent camera feed.  While we managed to get reasonable colors and defined shapes, our video seemed to update in bars, which was best described as “flickering”. Despite looking through our code many times, analyzing the clocks, replacing all the hardware, and rewiring at least once, we were unable to get a clean image unless the gain was turned very low, at which point the feed was very dark.</p>
+        <p>Here is a video of this raw, imperfect camera feed:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/Ob7xX0_PDgk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>However, after playing around with some more camera registers, we were able to obtain a relatively clean output.  This is the register that alters the gain ceiling, which makes the image very dark, but smoothes out the camera feed.  We added the following register to our list of registers to write in the Arduino file:</p>
+        <ul>
+          <li>Register: COM9</li>
+          <li>Address: 0x14</li>
+          <li>Value: 0x0A</li>
+          <li>Purpose: After the gain ceiling</li>
+        </ul>
+        <p>And here is a video of the clean feed:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/1ZIq0y7bGI8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <h3>Color Distinguishment</h3>
-        <p>We wrote the image processor module to identify what was the dominant color of the frame it was seeing.  We created registers which update each time the RGB pixels from the downsampler with the color that is the largest in those bits (if the 2 of the 3 red read 1, the red updates, and if the 2 blue are high, the blue register updates).  At the end of a frame, the totals are compared and the output RESULT is assigned to either 9’b01 if blue or 9’b10 if red, before all the variables are reset.</p>
-        <p>To test the image processor we assigned LEDs on the FPGA to light up depending on the output and then saw if the right ones lit up according to the test color.</p>
+        <p>We wrote the image processor module to identify what was the dominant color of the camera's current frame.  We created registers which update each time the RGB pixels from the downsampler with the color that is the largest in those bits.  At the end of a frame, the totals are compared and the output RESULT is assigned to either 9’b01 if blue or 9’b10 if red, before all the variables are reset.</p>
+        <p>To test the image processor we assigned LEDs on the FPGA to light up according to which color was observed by the camera (as described in Arduino-Side, 3. Receiving FPGA data).</p>
+        <p>Here is our image-processor (color-detection) code:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">always</span> @ ( <span style="color: #008800; font-weight: bold">posedge</span> <span style="color: #003366; font-weight: bold">CLK</span> ) <span style="color: #008800; font-weight: bold">begin</span>
+          <span style="color: #888888">// If we&#39;ve reached the end of a frame, compare red and blue, and</span>
+        <span style="color: #888888">// output accordingly.</span>
+          <span style="color: #888888">// red = RESULT[1] high, and blue = RESULT[0] high</span>
+          <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #003366; font-weight: bold">VGA_VSYNC_NEG</span>) <span style="color: #008800; font-weight: bold">begin</span> 
+            <span style="color: #888888">// RED</span>
+            <span style="color: #008800; font-weight: bold">if</span> ( redcounter <span style="color: #333333">&gt;</span> bluecounter ) <span style="color: #008800; font-weight: bold">begin</span>
+              res <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">9&#39;b10</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+            
+            <span style="color: #888888">// BLUE</span>
+            <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> ( redcounter <span style="color: #333333">&lt;</span> bluecounter ) <span style="color: #008800; font-weight: bold">begin</span>
+              res <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">9&#39;b01</span>;
+            <span style="color: #008800; font-weight: bold">end</span>    
+            <span style="color: #888888">// NEITHER</span>
+            <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">begin</span>
+              res <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">9&#39;b00</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+            
+            red  <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0</span>;
+            blue <span style="color: #333333">=</span> <span style="color: #005588; font-weight: bold">0</span>;
+          <span style="color: #008800; font-weight: bold">end</span>
+          
+          <span style="color: #888888">// Mid-frame, increment red and blue</span>
+          <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">begin</span>
+            <span style="color: #888888">// Increment Red</span>
+            <span style="color: #008800; font-weight: bold">if</span> ( ( <span style="color: #003366; font-weight: bold">PIXEL_IN</span>[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">6</span>] <span style="color: #333333">&gt;</span> <span style="color: #003366; font-weight: bold">PIXEL_IN</span>[<span style="color: #005588; font-weight: bold">1</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>] ) <span style="color: #333333">&amp;&amp;</span> ( <span style="color: #003366; font-weight: bold">PIXEL_IN</span>[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">6</span>] <span style="color: #333333">&gt;</span> <span style="color: #005588; font-weight: bold">2&#39;b10</span> ) ) <span style="color: #008800; font-weight: bold">begin</span>
+              red <span style="color: #333333">=</span> red <span style="color: #333333">+</span> <span style="color: #005588; font-weight: bold">1</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+              
+            <span style="color: #888888">// Increment Blue</span>
+            <span style="color: #008800; font-weight: bold">if</span> ( ( <span style="color: #003366; font-weight: bold">PIXEL_IN</span>[<span style="color: #005588; font-weight: bold">1</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #003366; font-weight: bold">PIXEL_IN</span>[<span style="color: #005588; font-weight: bold">7</span><span style="color: #333333">:</span><span style="color: #005588; font-weight: bold">6</span>] ) <span style="color: #888888">/*&amp;&amp; ( PIXEL_IN[1:0] &gt; PIXEL_IN[4:3] ) */</span>) <span style="color: #008800; font-weight: bold">begin</span>
+              blue <span style="color: #333333">=</span> blue <span style="color: #333333">+</span> <span style="color: #005588; font-weight: bold">1</span>;
+            <span style="color: #008800; font-weight: bold">end</span>
+            redcounter  <span style="color: #333333">=</span> red;
+            bluecounter <span style="color: #333333">=</span> blue;
+          <span style="color: #008800; font-weight: bold">end</span>
+        <span style="color: #008800; font-weight: bold">end</span>
+        </pre></div>
+        <p>And here is a video of the full color detection system (referred in section Arduino-Side, 3. Receiving FPGA Data):</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sju5XPj3VnM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>Note that our FPGA’s 2-bit treasure signal implicitly signifies whether or not there is a treasure (i.e. 00 = no treasure, 01 = blue treasure, 10 = red treasure).  So, this system effectively communicates whether or not there is a treasure, and what color it is.</p>
+
       </div>
     </section>
 
-<!--
     <section id="problems" class="content-section bg-primary text-white">
       <div class="container">
-        
+        <h1>Summary and Conclusions</h1>
+        <p>As demonstrated in our video above, our color-detection system, by and large, works!  We found that it worked best when we did left the gain-ceiling register on the camera to its default value.  I.e., while the camera feed may look, er….. unpleasant, our color-detection seems to work regardless.</p>
+        <p>This lab was a huge learning experience for our team; none of us ever had extensive experience with coding and debugging an FPGA with verilog until this lab.  We definitely gained some valuable debugging and problem-solving skills.</p>
       </div>
-    </section>-->
+    </section>
 
     <!-- Map -->
     <!-- POINT TO PHILLIPS -->
