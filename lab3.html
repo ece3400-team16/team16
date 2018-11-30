@@ -133,14 +133,7 @@
           <li>Add a different power source for wall sensors</li>
           <li>Somehow cut-off the power to wall sensors at the start, since we don't need them until we receive a 660Hz signal</li>
         </ul>
-        <p>We chose the latter (Solution 2), because we didn't want to add weight of an extra battery. But eventually we had to use the former because the wall sensors values were varying a lot due to noise produced in Vdd line. So, we just separated the wall sensors to a different power source; And everything started working fine.</p>
-        <div class="row no-gutters">
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab3/wallsensor_diagram.png" alt="">
-            </a>
-          </div>
-        </div>
+        <p>We chose the latter, because we didn't want to add weight of an extra battery. But eventually we had to use the former because the wall sensors values were varying a lot due to noise produced in Vdd line. So, we just separated the wall sensors to a different power source; And everything started working fine.</p>
         <p>Another issue was the short supply of analog pins. This was an easy fix.  Since we had space in our mux (the mux used for the three wall sensors), we simply added the audio input to the fourth input for the mux (still using 2 selector bits for the three walls and the audio detection).  Then, we selected the correct input using the selector bits in the audio function like so:</p>
         <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">audio_detected</span>() {
           <span style="color: #888888">// Store old values </span>
@@ -177,8 +170,7 @@
           <span style="color: #008800; font-weight: bold">return</span> ret;
         }
         </pre></div>
-        <p>Notice how we save and restore several registers, similar to the robotDetected() (optical detection) function.  Also notice the two digitalWrite lines, which are used to select the mux input for audio.</p>
-        <p>This is essentially how we incorporated the audio.  Combined with adding the BJT switch for the wall sensors, this successfully integrated our systems.</p>
+        <p>Notice how we save and restore several registers, similar to the robotDetected() (optical detection) function.  Also notice the two digitalWrite lines, which are used to select the mux input for audio.This is essentially how we incorporated the audio.</p>
       </div>
     </section>
 
