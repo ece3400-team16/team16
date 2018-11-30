@@ -256,7 +256,7 @@
           }
         }
         </pre></div>
-        <p>We added a case called LISTEN_FOR_START, which essentially waits until audio_detected() is true; once we obtain 660 Hz (audio_detected()), we write a digital output high to the BJT switch, which then switches on the wall sensors; again, we incorporated this switch to turn on the wall sensors after the audio circuit is finished, because otherwise, the wall sensors caused noise in the audio circuit.</p>
+        <p>We added a case called LISTEN_FOR_START, which essentially waits until audio_detected() is true. Once we obtain 660 Hz (audio_detected()), we write a digital output high to the mux pin, which was used so that we'd be able to receive signals from multiple different sensors (i.e. wall sensors, audio detection) without any noise or incorrect data.</p>
         <p>Also pay special attention to the FOLLOW_WALL case.  These conditionals only tell the robot which direction to turn.  After it decides this, it always returns to the FOLLOW_LINE state, which calls goToIntersection().</p>
         <p>Here is a video of Arnold starting upon hearing 660 Hz, successfully navigating a maze, AND detecting IR:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/dVJtgPkwJ7I" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
