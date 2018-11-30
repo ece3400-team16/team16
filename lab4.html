@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Milestone 3</title>
+    <title>Lab 4</title>
     <link rel="shortcut icon" href="favicon-paper-plane.ico" />
     
 
@@ -51,9 +51,9 @@
     <!-- Header -->
     <header class="masthead d-flex">
       <div class="container text-center my-auto">
-        <h1 class="mb-1">Milestone 3</h1>
+        <h1 class="mb-1">Lab 4</h1>
         <h3 class="mb-5">
-          <em>XXXXX</em>
+          <em>We can see clearly now, the rain is gone (kinda)</em>
         </h3>
         <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
       </div>
@@ -63,9 +63,34 @@
     <section id="about" class="content-section">
       <div class="container">
         <h1>Objective</h1>
-        <p>XXXX</p>
+        <p>For this lab, we used an FPGA (specifically, a DE0-Nano board), an Arduino, and an OV7670 camera, to create a functional camera and a system that distinguishes red and blue color.  The FPGA is used to clock the camera and read from the camera’s byte output, and transform said output into data that can be stored in memory and displayed on a screen.  The Arduino is simply used to write register data to the camera.  The FPGA also transmits data (majority-red/blue color data) to the Arduino.  This entire system will be further expanded and implemented on our robot for the final competition, which involves detecting different colored (red/blue) and different shaped treasures.</p>
         <h1>Procedure</h1>
-        <p>XXXX</p>
+        <p>The main goal in Lab 4 was to get the camera up and running and have our system distinguish between red and blue color, as well as communicate whether a treasure even exists.  Although our live camera feed is still quite imperfect (this will likely cause problems for shape-detection further down the road), our system does indeed successfully meet this overarching goal of distinguishing color.  The steps we took to complete this task are outlined below:</p>
+        <ul>
+          <li>Create a Phase-Locked-Loop to ensure that the several clocks we require (the OV7670 requires a 24-MHz clock, the VGA module requires a 25-MHz clock, etc.) are treated in the FPGA as actual clock lines and that they are not skewed</li>
+          <li>
+            <p>On the Arduino:</p>
+            <ul>
+              <li>Determine the register values needed to be written to their specific register addresses (using the OV7670 datasheet)</li>
+              <li>Write these register values to the camera via the Arduino (and a sketch file)</li>
+              <li>Successfully reading color data sent from the FPGA</li>
+            </ul>
+          </li>
+          <li>
+            <p>On the FPGA:</p>
+            <ul>
+              <li>Correctly display memory contents of an FPGA onto a screen</li>
+              <li>Correctly parse camera information (in our case, RGB-565-formatted data), and display it to the screen</li>
+              <li>Accurately determine if most pixels from the camera feed are red/blue (distinguishing color), and correctly sending such data</li>
+            </ul>
+          </li>
+          <li>
+            <p>Integration:</p>
+            <ul>
+              <li>Wiring the Arduino, Camera, and FPGA all together correctly such that the FPGA can successfully communicate color distinguishment to the Arduino</li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -82,7 +107,7 @@
                 <i class="far fa-lightbulb"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>Phase-Locked Loop (PLL)</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -93,7 +118,7 @@
                 <i class="fas fa-screwdriver"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>Arduino Side</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -104,7 +129,7 @@
                 <i class="fas fa-toolbox"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>FPGA Side</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -115,7 +140,7 @@
                 <i class="fas fa-car-crash"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>Roadblocks and Obstacles</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -157,9 +182,7 @@
 
     <section id="learning_to_drive" class="content-section bg-primary text-white">
       <div class="container">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/f1nADrb4yFo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/NmIrN2H--Lo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/n3DbzoTrUAI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
       </div>
     </section>
 
