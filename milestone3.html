@@ -53,7 +53,7 @@
       <div class="container text-center my-auto">
         <h1 class="mb-1">Milestone 3</h1>
         <h3 class="mb-5">
-          <em>XXXXX</em>
+          <em>Finding our way around any maze</em>
         </h3>
         <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Wanna know more?</a>
       </div>
@@ -63,9 +63,7 @@
     <section id="about" class="content-section">
       <div class="container">
         <h1>Objective</h1>
-        <p>XXXX</p>
-        <h1>Procedure</h1>
-        <p>XXXX</p>
+        <p>For Milestone 3, we decided to implement DFS using recursion. In order to this, we wrote a function called traverseHelper. This function had parameters: coordX and coordY which corresponded to our global x and y variables. Our method of implementation gave priority to directions in the following order: front, left, right. So, if the front node has been been visited, we check the left node and if the right has been visited, we check the right node.</p>
       </div>
     </section>
 
@@ -77,45 +75,34 @@
         </div>
         <div class="row">
             <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-              <a href="#understanding_arduinos" class="text-white text-center js-scroll-trigger">
+              <a href="#implementation" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="far fa-lightbulb"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>Implementation</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
             </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-            <a href="#analyzing_potentiometers" class="text-white text-center js-scroll-trigger">
+            <a href="#backtracking" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-screwdriver"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
+                <strong>Backtracking</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
           </div>
           <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-            <a href="#assembling_arduino" class="text-white text-center js-scroll-trigger">
+            <a href="#results" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
                 <i class="fas fa-toolbox"></i>
               </span>
               <h4>
-                <strong>XXXXX</strong>
-              </h4>
-              <p class="text-faded mb-0"></p>
-            </a>
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <a href="#learning_to_drive" class="text-white text-center js-scroll-trigger">
-              <span class="service-icon rounded-circle mx-auto mb-3">
-                <i class="fas fa-car-crash"></i>
-              </span>
-              <h4>
-                <strong>XXXXX</strong>
+                <strong>Final Results</strong>
               </h4>
               <p class="text-faded mb-0"></p>
             </a>
@@ -124,42 +111,189 @@
       </div>
     </section>
 
-    <section class="content-section" id="understanding_arduinos">
+    <section class="content-section" id="implementation">
       <div class="container">
-        <h1>XXXXX</h1>
-        <h2>description</h2>
-        <p>Generate code with hilite.me</p>
+        <h1>Implementation</h1>
+        <h2>One Word: Recursion</h2>
+        <p>We initially just implemented this by checking each sensor in the above mentioned order and then turning and/or moving forward accordingly. We soon realised that in order to accurately call traverseHelper(coordX, coordY) on the node we moved to, we would have to take Arnold's direction into account. So we added a direction dependent switch statement to our code, updated our coordinates accordingly with the help of local variables nextX and nextY and then called traverseHelper(coordX, coordY) on the newly updated coordinates.</p>
+        <p>With this alone, our code correctly traversed an empty maze (no walls) using DFS but failed to return to it's starting point after that. This led us to realise that we hadn't implemented any form of backtracking for Arnold. While the recursive functions returned to their caller functions, Arnold had no idea how to move to his parent nodes. To fix this, we implemented another helper function called moveSrcToDest(dx, dy) which we called after calling traverseHelper(coordX, coordY) on the updated coordinates. This way, when the recursive functions returned to their caller, Arnold actually had a way to return to where he was when the function was called.</p>
+        <p>The function moveSrcToDest(dx, dy) takes in parameters dx and dy which are the change in x and change in y respectively. For this, we also used a direction dependent switch statement. We used this function to decide how Arnold needed to move based on the difference between his source and destination coordinates. Source coordinates in this case is where he currently is and destination coordinates refers to where he went (the coordX and coordY when the child traverseHelper() was initially called).</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">moveSrcToDest</span>(<span style="color: #333399; font-weight: bold">int</span> dx, <span style="color: #333399; font-weight: bold">int</span> dy) { <span style="color: #888888">// Dest - Src</span>
+          <span style="color: #008800; font-weight: bold">switch</span> (dir) {
+            <span style="color: #008800; font-weight: bold">case</span> NORTH: {
+                <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnAround();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  <span style="color: #888888">// Go forward</span>
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnRight();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnLeft();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> {
+                  <span style="color: #888888">// Do nothing</span>
+                }
+               <span style="color: #888888">// goToIntersection();</span>
+                
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> EAST: {
+                <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnRight();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnLeft();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  <span style="color: #888888">// Do nothing</span>
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnAround();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> {
+                  <span style="color: #888888">// Do nothing</span>
+                }
+                <span style="color: #888888">//goToIntersection();</span>
+                
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> SOUTH: {
+                <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  <span style="color: #888888">// Do nothing</span>
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnAround();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnLeft();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnRight();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> {
+                  <span style="color: #888888">// Do nothing</span>
+                }
+                <span style="color: #888888">//goToIntersection();</span>
+                
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> WEST: {
+                <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnLeft();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dx <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnRight();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>) {
+                  turnAround();
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> <span style="color: #008800; font-weight: bold">if</span> (dy <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>) {
+                  <span style="color: #888888">// Do nothing</span>
+                  goToIntersection();
+                } <span style="color: #008800; font-weight: bold">else</span> {
+                  <span style="color: #888888">// Do nothing</span>
+                }
+                <span style="color: #888888">//goToIntersection();</span>
+                
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+          }
+        }
+        </pre></div>
+        <p>After implementing this function, Arnold was still having trouble traversing different maze configurations using DFS. We eventually realised that this was because when he returned to a particular node, he was facing a different direction than when he originally visited the node. Because of how we wrote our if-statements, this meant that Arnold didn't end up checking all paths from every node. He would sometimes end up checking one path two times. For example, when Arnold wants to go from node A to node B, he checks the front-wall sensor. Since there is no front-wall (hypothetically), he goes forward i.e. to node B. When he comes back (as part of backtracking) to node A, then he tries to check left-wall as part of the sequence (Remember our order of checking walls? Front-Left-Right). But Arnold’s left is not left anymore because it came back from node B and his direction is flipped. So we should have incorporated his previous direction and current direction while choosing walls, which we didn’t so that was the problem! We decided to fix this problem by forcing Arnold to remember his original direction and checking sensors based on that direction instead of his current direction. We kept track of the direction everytime traverseHelper was called in a variable called referenceDir. We also wrote functions for each wall Arnold could possibly see, to decide which sensor to check. The choice of sensor was dependent on the difference between referenceDir and dir (our global direction variable). The functions were frontWallDetection(referenceDir), leftWallDetection(referenceDir) and rightWallDetection(referenceDir).</p>
+        <p>Below is our fronWallDetection function, to give an idea of how all three of the wallDetection functions were written:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">bool</span> <span style="color: #0066BB; font-weight: bold">frontWallDetection</span>(<span style="color: #333399; font-weight: bold">int</span> referenceDir) {
+          <span style="color: #333399; font-weight: bold">int</span> change <span style="color: #333333">=</span> referenceDir <span style="color: #333333">-</span> dir;
+          <span style="color: #008800; font-weight: bold">switch</span> (change) {
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">3</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> leftWall();
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span> : {
+                <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">false</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> rightWall();
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">0</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> frontWall();
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">1</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> leftWall();
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">2</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">false</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">3</span>: {
+                <span style="color: #008800; font-weight: bold">return</span> rightWall();
+              }
+          }
+        }
+        </pre></div>
+
       </div>
     </section>
 
-    <section id="analyzing_potentiometers" class="content-section bg-primary text-white">
+    <section id="backtracking" class="content-section bg-primary text-white">
       <div class="container">
-        <div class="row no-gutters">
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port_diagram.jpg" alt="">
-            </a>
-          </div>
-          <div class="col-lg-6">
-            <a class="portfolio-item">
-              <img class="img-fluid" src="img/lab1/pot_serial_port.JPG" alt="">
-            </a>
-          </div>
-        </div>
+        <h1>Backtracking</h1>
+        <h2>Going back to square one</h2>
+        <p>After implementing these functions, Arnold was still struggling. He could now successfully traverse the maze but he wasn't backtracking correctly. He kept running into walls that he knew were there (as seen from the GUI). After stepping through the code and pretending to be Arnold, we realised that we were deciding where walls were based on the initial direction but we were still turning based on Arnold's current direction. This caused him to keep running into walls, because even though we fixed the checking-wall function, we still had to fix the turning function. Confused? Consider the same above example. Arnold is smart enough now to check the right wall (for instance) even though he wants to detect left wall; because he know his heading is flipped in process of backtracking. But what he still doesn’t know is the fact that his capability of turning is also flipped. What that means is, he has to dynamically decide where to turn. For example, a left turn for Arnold when he is facing North is equal to right turn when facing South. In order to dynamically decide turns, we added decideLeft() and decideRight().</p>
+        <p>Below is the code for decideLeft(), which closely mirrors decideRight() in structure:</p>
+        <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #333399; font-weight: bold">void</span> <span style="color: #0066BB; font-weight: bold">decideLeft</span>(<span style="color: #333399; font-weight: bold">int</span> referenceDir) {
+          
+          <span style="color: #333399; font-weight: bold">int</span> change <span style="color: #333333">=</span> dir <span style="color: #333333">-</span> referenceDir;
+          <span style="color: #008800; font-weight: bold">switch</span> (change) {
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">3</span>: {
+                <span style="color: #888888">//nothing</span>
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>: {
+                turnRight();
+                goToIntersection();
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>: {
+                goToIntersection();
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">0</span>: {
+                turnLeft();
+                goToIntersection();
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">1</span>: {
+                <span style="color: #888888">//nothing</span>
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">2</span>: {
+                turnRight();
+                goToIntersection();
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+            <span style="color: #008800; font-weight: bold">case</span> <span style="color: #0000DD; font-weight: bold">3</span>: {
+                goToIntersection();
+                <span style="color: #008800; font-weight: bold">break</span>;
+              }
+          }
+        }
+        </pre></div>
       </div>
     </section>
 
-    <section id="assembling_arduino" class="content-section">
+    <section id="results" class="content-section">
       <div class="container">
-      
-      </div>
-    </section>
-
-    <section id="learning_to_drive" class="content-section bg-primary text-white">
-      <div class="container">
+        <h1>Final Results</h1>
+        <h2>Dreams sometimes do come true</h2>
+        <p>After adding those functions, Arnold was able to successfully traverse multiple maze configurations using DFS successfully. Here are a few videos of Arnold doing his thing.</p>
+        <p>Here's Arnold traversing a (nearly) empty 4x5 maze:</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/n3DbzoTrUAI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>Here are some more complicated 4x5 mazes to fully show off our DFS and backtracking:</p>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/f1nADrb4yFo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         <iframe width="560" height="315" src="https://www.youtube.com/embed/NmIrN2H--Lo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/n3DbzoTrUAI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
       </div>
     </section>
 
