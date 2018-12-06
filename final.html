@@ -162,17 +162,6 @@
               <p class="text-faded mb-0"></p>
             </a>
           </div>
-          <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-            <a href="#additions" class="text-white text-center js-scroll-trigger">
-              <span class="service-icon rounded-circle mx-auto mb-3">
-                <i class="fas fa-toolbox"></i>
-              </span>
-              <h4>
-                <strong>Additions</strong>
-              </h4>
-              <p class="text-faded mb-0"></p>
-            </a>
-          </div>
           <div class="col-lg-3 col-md-6">
             <a href="#result" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
@@ -191,7 +180,7 @@
     <section class="content-section" id="hardware">
       <div class="container">
         <h1>Hardware</h1>
-        <h2>Arduino's Skeletong</h2>
+        <h2>Arduino's Skeleton</h2>
         <p>Arnold has a soldered IR receiving circuit and audio detection circuit that hand on top of his top chassis.  That top chassis also has his IR emitting hat.  In his middle chassis, he has a multiplexer that takes in signals from the wall sensors and line sensors.  That mux is on a protoboard that simplifies the power and grounding for the mux, sensors, and motors.   There are two inner ground rails that are shorted together with two outer power rails on the main protoboard.  The mux sits on a carriage in the center of the board with the inputs going in as an ordered line for debugging purposes.</p>
         <p>Arnolds bottom chassis contains two batteries, for the arduino and for the servos.  It has one battery pushed forward to balance it and reduce the possibility of “jumping” in the GUI (it didn’t).</p>
       </div>
@@ -199,19 +188,17 @@
 
     <section id="software" class="content-section bg-primary text-white">
       <div class="container">
-        
+        <h1>Software</h1>
+        <h2>Bits and Bytes</h2>
+        <p>For each hardware element of our robot, there was a software component behind it. The full code can be found <a href="https://github.com/ece3400-team16">here</a>, on our Github.</p>
+        <p>To start, Arduino used the acoustic circuit from <a href="lab2.html">Lab 2</a> to detect a 660 Hz. As described in that lab, the acoustic signals were detected by the microphone in the circuit and run through an FFT, which put the strength of each signal at every frequency into a series of bins. To ensure that the FFT wouldn't cost our robot a lot of computing power and time, the bin that corresponded to the 660Hz signal was checked at the beginning of the competition and never checked again. The audio_detected function did this, and once it returned true, the robot was on its way through the maze.</p>
+        <p>For the actual maze traversal itself, once the 660Hz signal had been detected, our depth-first search (DFS) algorithm was called. This algorithm was described fully in <a href="milestone3.html">Milestone 3</a>, but to give a high-level overview, it used a recursive function to proceed to every intersection within a specified-size maze. The movement of the robot was encoded into priorities, where moving forward took precedence (if there was no front wall of course), followed by turning left (if there was no left wall), and turning right (if there was no right wall). Since the function was recursive, if a path had been completely followed to visit all possible nodes along the way, the robot would then backtrack through the function stack. This was a more simplified final algorithm, but also one that required more complicated debugging along the way.</p>
       </div>
     </section>
 
-    <section id="additions" class="content-section">
+    <section id="result" class="content-section">
       <div class="container">
-      
-      </div>
-    </section>
-
-    <section id="result" class="content-section bg-primary text-white">
-      <div class="container">
-        
+        <h1>Result</h1>
       </div>
     </section>
 
