@@ -162,6 +162,17 @@
               <p class="text-faded mb-0"></p>
             </a>
           </div>
+          <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+            <a href="#restructured" class="text-white text-center js-scroll-trigger">
+              <span class="service-icon rounded-circle mx-auto mb-3">
+                <i class="fas fa-toolbox"></i>
+              </span>
+              <h4>
+                <strong>Restructured</strong>
+              </h4>
+              <p class="text-faded mb-0"></p>
+            </a>
+          </div>
           <div class="col-lg-3 col-md-6">
             <a href="#result" class="text-white text-center js-scroll-trigger">
               <span class="service-icon rounded-circle mx-auto mb-3">
@@ -202,9 +213,26 @@
 
     <section id="result" class="content-section">
       <div class="container">
+        <h1>Restrcuturing</h1>
+        <h2>Making Everything Look Good</h2>
+        <p>We made sure to keep our code organized and easy-to-understand.  Throughout the semester, we accumulated many files, some of which were valuable, others not.  Fortunately, we implemented a number of methods to help keep our code clean and our software easily-manageable.</p>
+        <p>We maintained our software with strict version control on both lab and milestone .ino files, via clearly labeled folder names and clear git commit messages on our GitHub repository.  This basic filename convention was a simple start to our file management.</p>
+        <p>Our team also used GitHub effectively.  We never had to deal with any git merges or other branch issues.  This relied on effective communication between members when making changes, pulling, or pushing code when members wanted to separately test/debug software.</p>
+        <p>Thirdly, our team members effectively comment all of the code that we type, so as to make it easy for code to be passed between teammates and understood quickly (time was of the essence).</p>
+        <p>Lastly, after we finished our final code, we spent time writing separate header (.h) and C++ (.cpp) files to import into a main file, to make our program shorter, simpler, and easier to read.  Although we could have refractored even further, we ended up creating four different classes for four crucial systems on our robot.</p>
+        <p>The first class, Locomotion, imports the Servo library, instantiates the servos for the wheels, and has functions that write to individual wheels.  One instance of Locomotion is created in our dfs_main file.</p>
+        <p>The second class, Radio, imports several libraries used for radio communication between our robot and our base-station Arduino.  It defines a single function, pingOut; since several other radio-functions used variables from dfs_main, we found it simple to leave those functions in dfs_main.  One instance of Radio is created in our dfs_main file.</p>
+        <p>The third class, ToneDetect, imports the FFT library, and contains two functions: audio_detected() and robot_detected().  These are, quite obviously, used for detecting 660 Hz sound and 6 kHz IR light.  One instance of ToneDetect is created in our dfs_main file.</p>
+        <p>The fourth class, WallSensor, is used to contain the code for reading wall sensor information and detecting if a wall is present.  Three instances of WallSensor (for the front, left, and right wall sensors) are created in dfs_main.</p>
+        <p>The rest of dfs_main contains mostly algorithms and functions for traversing the maze according to the DFS algorithm.</p>
+      </div>
+    </section>
+
+    <section id="result" class="content-section bg-primary text-white">
+      <div class="container">
         <h1>Result</h1>
         <h2>The Final Product</h2>
-        <p>Arduino Schwarznegger was by no means the best robot out there, but it was a robot that we are proud of in what it could do and what it accomplished during the final competition.</p>
+        <p>Arduino Schwarznegger was by no means the best robot out there, but it was a robot that we are proud of in what it could do and what it accomplished during the final competition. We hope you enjoy our work; we’ve had a heck of a time creating it!</p>
         <div class="row no-gutters">
           <div class="col-lg-6">
             <a class="portfolio-item">
